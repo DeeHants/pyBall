@@ -14,7 +14,7 @@ Devices are "programmed" with a software serial number and channel, which is use
 Multiples devices can share a serial and channel, and be programmed simultaneously with the serial passthru or splitting.
 For brevity, the rest of this document will assume a single device.
 
-All commands are sent as single "packets" of data, made up of a single byte, followed by a number of 16-bit words in little-endian, the last of which is a checksum.
+All commands are sent as single "packets" of data, made up of a single byte, followed by a number of 16-bit words in little endian, the last of which is a checksum.
 
      02 08 01 00 00 04 00 00 00 00 00 01 00 00 04 0F 05
     |Op|Addr1|Addr2|Len  |Payload                |Sum  |
@@ -32,7 +32,7 @@ The checksum is a simple arithmetic sum of the operation byte, and each 16-bit w
 
 ## Operations ##
 
-### Target, 0x01 ###
+### Target, `0x01` ###
 
 The Target operation specifies the software serial number and channel the device that should listen to the subsequent packets.
 
@@ -52,7 +52,7 @@ The Target operation specifies the software serial number and channel the device
   * Channel: The 0 based channel number
   * Mode: Set to `0x0001` when sending commands, and `0x0000` at the end.
 
-### Store, 0x02 ###
+### Store, `0x02` ###
 
 The Store operation writes a block of data to a memory location on the device.
 This covers the vast majority of programming of the device and includes the device state, repeat values, position settings, image and font data, etc.
@@ -70,7 +70,7 @@ This covers the vast majority of programming of the device and includes the devi
 Bank/sequence address is `0x0000` in most cases, but for bank and sequence data, extends the address space up to 64x, to allow 4 banks of 16 sequences.
 All device settings are set on the first bank and sequence (`0x0000`).
 
-### Re-initialise, 0xFF ###
+### Re-initialise, `0xff` ###
 
 The Re-initalise operation causes the device to restart and reread any stored data.
 
