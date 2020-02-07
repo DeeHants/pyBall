@@ -14,7 +14,7 @@ Devices are "programmed" with a software serial number and channel, which is use
 Multiples devices can share a serial and channel, and be programmed simultaneously with the serial passthru or splitting.
 For brevity, the rest of this document will assume a single device.
 
-All commands are sent as single "packets" of data, made up of a single byte, followed by a number of 16-bit words in little-endian, the last of which is is a checksum.
+All commands are sent as single "packets" of data, made up of a single byte, followed by a number of 16-bit words in little-endian, the last of which is a checksum.
 
      02 08 01 00 00 04 00 00 00 00 00 01 00 00 04 0F 05
     |Op|Addr1|Addr2|Len  |Payload                |Sum  |
@@ -34,7 +34,7 @@ The checksum is a simple arithmetic sum of the operation byte, and each 16-bit w
 
 ### Target, 0x01 ###
 
-The Target operation specifies the software serial number and channel of all devices that should receive the subsequent commands.
+The Target operation specifies the software serial number and channel the device that should listen to the subsequent packets.
 
 * Operation: `0x01`
 * Address 1: `0x0000`
@@ -55,7 +55,7 @@ The Target operation specifies the software serial number and channel of all dev
 ### Store, 0x02 ###
 
 The Store operation writes a block of data to a memory location on the device.
-This covers the vast majority of programming of the devices and includes the device state, repeat values, position settings, image and font data, etc.
+This covers the vast majority of programming of the device and includes the device state, repeat values, position settings, image and font data, etc.
 
      02 08 01 00 00 04 00 00 00 00 00 00 00 06 04 14 05
      02 0D 01 00 00 01 00 00 00                   10 01
@@ -67,7 +67,7 @@ This covers the vast majority of programming of the devices and includes the dev
 * Length: The number of words to store from the start address
 * Payload: The data to store from Start to Start + Length - 1
 
-Bank/sequence is `0x0000` in most cases, but for bank and sequence data, extends the address space up to 64x, 4 banks of 16 sequences.
+Bank/sequence address is `0x0000` in most cases, but for bank and sequence data, extends the address space up to 64x, to allow 4 banks of 16 sequences.
 All device settings are set on the first bank and sequence (`0x0000`).
 
 ### Re-initialise, 0xFF ###
