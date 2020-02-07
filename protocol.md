@@ -81,3 +81,72 @@ The Re-initalise operation causes the device to restart and reread any stored da
 * Address 1: `0x0000`
 * Address 2: `0x0000`
 * Payload: `0x0001`
+
+## Memory addresses ##
+
+Every setting or value is stored at a particular address, with the entire range split into several ranges.
+Values can either be set individually, or in a block for a set of sequential values.
+
+Many of these addresses are specified with the bank/sequence in address 2.
+This is composed of the sequence index (0 based) in the low nibble, an the bank index (0 based) in the high nibble of the first byte, e.g. Bank 2, sequence 5 will be `0x0014`.
+
+### Device values ###
+
+* `0x0100-0x0103`: Software serial 8 bytes, little endian
+* `0x0104`: Channel number
+* `0x0108`: Active position
+* `0x0109`: Active sequence
+* `0x010a`: Active bank
+* `0x010b`: Chase state
+* `0x010d`: Scheduler enabled
+* `0x0180`: Bank 1 additional repeat count <sup>1</sup>
+* `0x0181`: Bank 2 additional repeat count <sup>1</sup>
+* `0x0182`: Bank 3 additional repeat count <sup>1</sup>
+* `0x0183`: Bank 4 additional repeat count <sup>1</sup>
+
+<sup>1</sup> Repeat counts are 0 based, 0 = repeat once, 1 = repeat twice, etc).
+
+### Sequence values ###
+
+All these values use the bank/sequence address in address 2.
+
+* `0x2000`: Sequence state
+* `0x2001`: Sequence additional repeat count <sup>1</sup>
+* `0x2002`: Number of valid positions
+
+<sup>1</sup> Repeat counts are 0 based, 0 = repeat once, 1 = repeat twice, etc).
+
+### Position values ###
+
+Like the sequence values above, all these values use the bank/sequence address in address 2.
+
+Each position is defined in blocks of 16 values, repeated 256 times in sequential blocks.
+
+* `0x2100`: Image index
+* `0x2101`: Columns
+* `0x2102`: Gap size
+* `0x2103`: Brilliance
+* `0x2104`: Scroll speed
+* `0x2105`: Rotational position offset
+* `0x2106`: Repeat index
+* `0x2107`: Repeat count <sup>1</sup>
+* `0x210f`: Frame count
+
+These repeat 256 times with the first at `0x2100`, second at `0x2110`, and the last at `0x30f0`, putting the last value at `0x30ff`.
+
+<sup>1</sup> Repeat counts are 0 based, 0 = repeat once, 1 = repeat twice, etc).
+
+### Image pool ###
+
+Like the sequence values above, all these values use the bank/sequence address in address 2.
+
+Each image pool entry is defined in blocks of 4 values, repeated 256 times in sequential blocks.
+
+* `0x3100`: Image width (in pixels)
+* `0x3102`: Image address
+
+These repeat 256 times with the first at `0x3100`, second at `0x3104`, and the last at `0x34fc`, putting the last value at `0x34ff`.
+
+The image data itself is written starting at address `0x3500`, with each block of 16 values representing the bitmap data of a single vertical line of the image.
+
+* `0x3500-0xffff`: Image data
