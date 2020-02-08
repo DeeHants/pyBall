@@ -90,7 +90,15 @@ Values can either be set individually, or in a block for a set of sequential val
 Many of these addresses are specified with the bank/sequence in address 2.
 This is composed of the sequence index (0 based) in the low nibble, an the bank index (0 based) in the high nibble of the first byte, e.g. Bank 2, sequence 5 will be `0x0014`.
 
+* `0x0100-0x1fff`: Device wide data
+* `0x2000-0x20ff`: Sequence data
+* `0x2100-0x30ff`: Position data
+* `0x3100-0xffff`: Image pool data
+
 ### Device values ###
+
+Device wide data is stored in addresses in the range `0x0100-0x1fff`.
+All these values have `0x0000` in address 2.
 
 * `0x0100-0x0103`: Software serial 8 bytes, little endian
 * `0x0104`: Channel number
@@ -108,6 +116,7 @@ This is composed of the sequence index (0 based) in the low nibble, an the bank 
 
 ### Sequence values ###
 
+Sequence data is stored in addresses in the range `0x2000-0x20ff`.
 All these values use the bank/sequence address in address 2.
 
 * `0x2000`: Sequence state
@@ -118,6 +127,7 @@ All these values use the bank/sequence address in address 2.
 
 ### Position values ###
 
+Position data is stored in addresses in the range `0x2100-0x30ff`.
 Like the sequence values above, all these values use the bank/sequence address in address 2.
 
 Each position is defined in blocks of 16 values, repeated 256 times in sequential blocks.
@@ -138,6 +148,7 @@ These repeat 256 times with the first at `0x2100`, second at `0x2110`, and the l
 
 ### Image pool ###
 
+Image pool data is stored in addresses in the range `0x3100-0xffff`.
 Like the sequence values above, all these values use the bank/sequence address in address 2.
 
 Each image pool entry is defined in blocks of 4 values, repeated 256 times in sequential blocks.
@@ -147,6 +158,6 @@ Each image pool entry is defined in blocks of 4 values, repeated 256 times in se
 
 These repeat 256 times with the first at `0x3100`, second at `0x3104`, and the last at `0x34fc`, putting the last value at `0x34ff`.
 
-The image data itself is written starting at address `0x3500`, with each block of 16 values representing the bitmap data of a single vertical line of the image.
+The image data itself is written sequentially starting at address `0x3500`, with each block of 16 values representing the bitmap data of a single vertical line of an image.
 
 * `0x3500-0xffff`: Image data
