@@ -84,7 +84,7 @@ The Re-initalise operation causes the device to restart and reread any stored da
 
 ## Memory addresses ##
 
-Every setting or value is stored at a particular address, with the entire range split into several ranges.
+Every setting or value is stored at a particular address, with the entire address space split into several ranges.
 Values can either be set individually, or in a block for a set of sequential values.
 
 Many of these addresses are specified with the bank/sequence in address 2.
