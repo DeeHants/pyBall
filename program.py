@@ -5,9 +5,7 @@ zone_serial = '1026CCE9FBFDFBD8'
 zone_channel = 0
 
 # Create the zone
-zone = pyBallLib.Zone()
-zone.serial = zone_serial
-zone.channel = zone_channel
+zone = pyBallLib.Zone(zone_serial, zone_channel)
 
 # First sequence
 sequence = zone.bank(0).sequence(0)

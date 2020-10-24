@@ -4,10 +4,10 @@ from .Bank import Bank
 import datetime
 
 class Zone:
-    def __init__(self):
+    def __init__(self, serial='', channel=0):
         self.name = ''
-        self.serial = ''
-        self.channel = 0
+        self.serial = serial
+        self.channel = channel
         self.enabled = True
         self.chase_banks = True
         self.chase_bank_max = 4
