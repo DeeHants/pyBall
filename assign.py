@@ -19,7 +19,7 @@ for offset in [14, 12, 10, 8, 6, 4, 2, 0]:
 connection.target_zone(zone_serial, zone_channel, False)
 
 for device_serial in device_serials:
-    print 'Assigning ' + device_serial + ' to ' + zone_serial + ':' + str(zone_channel)
+    print('Assigning ' + device_serial + ' to ' + zone_serial + ':' + str(zone_channel))
 
     # Select the device we're talking to
     connection.target_device(device_serial, True)

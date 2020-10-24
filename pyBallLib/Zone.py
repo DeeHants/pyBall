@@ -37,7 +37,7 @@ class Zone:
         try:
             # Ensure we have an object
             if not self._banks[index]:
-                self._banks[index] = Bank.Bank(self, index)
+                self._banks[index] = Bank(self, index)
 
             # Return it
             return self._banks[index]
@@ -84,7 +84,7 @@ class Zone:
         # Upload each bank
         for bank in self._banks:
             if bank:
-                bank.upload(connection);
+                bank.upload(connection)
                 pass
 
         # Set the final state

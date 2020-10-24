@@ -7,7 +7,7 @@ class Position:
         self.index = index
 
         self.image = 0
-        self.cols = 73
+        self.columns = 73
         self.gap = 0
         self.scroll = 0
         self.offset = 0
