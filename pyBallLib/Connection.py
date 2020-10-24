@@ -12,8 +12,11 @@ class Connection:
         self.ser = serial.Serial(port, 38400)
         pass
 
-    def target(self, serial, channel, enable):
-        self.send(Ops.TARGET, 0x0000, 0x0000, [serial, channel, 0x1 if enable else 0x0])
+    def target_device(self, serial, enable):
+        self.send(Ops.TARGET_DEVICE, 0x0000, 0x0000, [serial, 0x1 if enable else 0x0])
+
+    def target_zone(self, serial, channel, enable):
+        self.send(Ops.TARGET_ZONE, 0x0000, 0x0000, [serial, channel, 0x1 if enable else 0x0])
 
     def set(self, bank, sequence, position, parameter, value):
         # Address 1 is the low nibble specifying the parameter, and subsequent positions following on from 0x2100

@@ -32,9 +32,26 @@ The checksum is a simple arithmetic sum of the operation byte, and each 16-bit w
 
 ## Operations ##
 
-### Target, `0x01` ###
+### Target device, `0x00` ###
 
-The Target operation specifies the software serial number and channel the device that should listen to the subsequent packets.
+The Target device operation specifies the serial number of the device that should listen to the subsequent packets.
+
+* Operation: `0x00`
+* Address 1: `0x0000`
+* Address 2: `0x0000`
+* Length: 5
+* Payload
+
+       EF CD D2 CE C1 C4 1E 24 01 00
+       EF CD D2 CE C1 C4 1E 24 00 00
+      |Software serial        |Mode |
+
+  * Device serial: The serial is handled slightly differently in that the entire 8 bytes is sent, little endian over 4 words. The example represents `241E C4C1 CED2 CDEF`
+  * Mode: Set to `0x0001` when sending commands, and `0x0000` at the end.
+
+### Target zone, `0x01` ###
+
+The Target zone operation specifies the software serial number and channel of the device that should listen to the subsequent packets.
 
 * Operation: `0x01`
 * Address 1: `0x0000`
@@ -48,7 +65,7 @@ The Target operation specifies the software serial number and channel the device
        D8 FB FD FB E9 CC 26 10 01 00 00 00
       |Software serial        |Chan |Mode |
 
-  * Software serial: The Software serial is handled slightly differently in that the entire 8 bytes is sent, little endian over 4 words. The example represents `1026 CCE9 FBFD FBD8`
+  * Software serial: The serial is handled slightly differently in that the entire 8 bytes is sent, little endian over 4 words. The example represents `1026 CCE9 FBFD FBD8`
   * Channel: The 0 based channel number
   * Mode: Set to `0x0001` when sending commands, and `0x0000` at the end.
 

@@ -1,6 +1,7 @@
 # iBall op values
 class Ops:
-    TARGET = 0x01
+    TARGET_DEVICE = 0x00
+    TARGET_ZONE = 0x01
     STORE = 0x02
     SETTIME = 0x04
     X7 = 0x07

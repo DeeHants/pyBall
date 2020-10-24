@@ -46,7 +46,7 @@ class Zone:
             raise IndexError('bank index out of range, must be 0-3')
 
     def target(self, connection, enable):
-        connection.target(self.serial, self.channel, enable)
+        connection.target_zone(self.serial, self.channel, enable)
 
     def settime(self, connection):
         # Length 17: 04 BE 00 00 00 04 00 39 41 12 26 01 01 20 80 32 E9 # 12:41:39

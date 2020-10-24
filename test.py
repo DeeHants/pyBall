@@ -1,8 +1,13 @@
 import pyBallLib
 
+serial_port = 'COM3'
+zone_serial = '1026CCE9FBFDFBD8'
+zone_channel = 0
+
 # Create the zone
 zone = pyBallLib.Zone()
-zone.serial = '0123456789ABCDEF'
+zone.serial = zone_serial
+zone.channel = zone_channel
 
 # First sequence
 sequence = zone.bank(0).sequence(0)
@@ -48,5 +53,5 @@ position.scroll = 0
 position.frames = 10
 
 # Upload the data
-connection = pyBallLib.Connection('COM3')
+connection = pyBallLib.Connection(serial_port)
 zone.upload(connection)
