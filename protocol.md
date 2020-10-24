@@ -87,6 +87,33 @@ This covers the vast majority of programming of the device and includes the devi
 Bank/sequence address is `0x0000` in most cases, but for bank and sequence data, extends the address space up to 64x, to allow 4 banks of 16 sequences.
 All device settings are set on the first bank and sequence (`0x0000`).
 
+### Set date/time, `0x04` ###
+
+The date and time operation sets the current date, time, and weekday on the device, used for scheduling.
+
+     04  BE 00  00 00  04 00  39 41 12 26 01 01 20 80  32 E9
+     04  BE 00  00 00  04 00  11 03 13 24 10 07 20 80  1A AF
+    |op |      |      |len   |se|mi|ho|da|mo|wd|yr|   |sum  |
+
+* Operation: `0x04`
+* Address 1: `0x00BE`
+* Address 2: `0x0000`
+* Length: 4
+* Payload
+
+       39 41 12 26 01 01 20 80 # 26/01/2020 12:41:39
+       11 03 13 24 10 07 20 80 # 24/10/2020 13:03:11
+      |se|mi|ho|da|mo|wd|yr|  |
+
+  * Seconds, Minutes, Hour: Time components
+  * Day, Month: Date components
+  * Weekday: 1, Sunday - 7, Saturday
+  * Year: Years from 2000. 2020 = 20, 1991 = -9
+
+Each of the payload components are packed into each value using [simple binary encoded decimal](https://en.wikipedia.org/wiki/Binary-coded_decimal).  
+This means a value of 19 is `0x19`, 20 is `0x20`.  
+Negative values are complement based value, with a radix of 13 for the units, and 5 for the tens.
+
 ### Re-initialise, `0xff` ###
 
 The Re-initalise operation causes the device to restart and reread any stored data.

@@ -1,6 +1,8 @@
 from .Constants import Ops, Addr
 from .Bank import Bank
 
+import datetime
+
 class Zone:
     def __init__(self):
         self.name = ''
@@ -48,12 +50,43 @@ class Zone:
     def target(self, connection, enable):
         connection.target_zone(self.serial, self.channel, enable)
 
-    def settime(self, connection):
-        # Length 17: 04 BE 00 00 00 04 00 39 41 12 26 01 01 20 80 32 E9 # 12:41:39
-        #           |op|     |     |len  |se|me|ho|da|mo|  |     |sum  |
+    def settime(self, connection, time = 0):
+        def packed_bcd_value(value):
+            # If it's negative, we need to use a complement value
+            neg = value < 0
+            if neg:
+                value = abs(value) - 1
+
+            # Each digit..
+            units = value % 10
+            tens = value // 10
+
+            # If negative, get the complement value
+            if neg:
+                units = 13 - units
+                tens = 5 - tens
+
+            # Return the BCD value
+            return tens << 4 | units
+
+        # Use the current time if none was passed
+        if time == 0:
+            time = datetime.datetime.now()
+
+        # Pack the date/time components into 4 16-bit words
+        date_parts = [
+            packed_bcd_value(time.second) |
+            packed_bcd_value(time.minute) << 8,
+            packed_bcd_value(time.hour) |
+            packed_bcd_value(time.day) << 8,
+            packed_bcd_value(time.month) |
+            packed_bcd_value((time.isoweekday() % 7) +1) << 8,
+            packed_bcd_value(time.year - 2000) |
+            0x8000
+        ]
 
         self.target(connection, True)
-        connection.send(Ops.SETTIME, 0x00be, 0x0000, [0x4139, 0x2612, 0x0101, 0x8020]) # FIXME Correctly set time
+        connection.send(Ops.SETTIME, 0x00be, 0x0000, date_parts)
         self.target(connection, False)
 
     def bs(self):
