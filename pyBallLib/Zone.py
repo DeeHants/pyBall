@@ -23,6 +23,31 @@ class Zone:
         for index in range(4):
             self._banks.append(Bank(self, index))
 
+    def assigndevice(self, connection, device_serial=''):
+        # Not talking to anything
+        self.target(connection, False)
+
+        # Part of the assignation needs the zone serial as individual bytes
+        zone_serial_bytes = []
+        for offset in [14, 12, 10, 8, 6, 4, 2, 0]:
+            zone_serial_bytes.append(int(self.serial[offset:offset + 2], 16))
+
+        print('Assigning ' + device_serial + ' to ' + self.serial + ':' + str(self.channel))
+
+        # Select the device we're talking to
+        connection.target_device(device_serial, True)
+
+        # Register this device with the zone serial and channel
+        connection.send(Ops.STORE, 0x010C, 0x0000, 0)
+        connection.send(Ops.STORE, 0x0100, 0x0000, [self.serial, self.channel])
+        connection.send(Ops.STORE, 0x0000, 0x4001, zone_serial_bytes + [self.channel, 2])
+
+        # Re-initialise
+        connection.send(Ops.REINIT, 0x0000, 0x0000, 1)
+
+        # Not talking to anything again
+        self.target(connection, False)
+
     def updatestate(self, connection):
         state = 0
         if self.freeze: state |= 0x01
