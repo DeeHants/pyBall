@@ -166,6 +166,7 @@ All these values use the bank/sequence address in address 2.
 * `0x2000`: Sequence state
 * `0x2001`: Sequence additional repeat count <sup>1</sup>
 * `0x2002`: Number of valid positions
+* `0x2003-0x2004`: Sequence checksum, sum of all words in the sequence image data and image metadata
 
 <sup>1</sup> Repeat counts are 0 based, 0 = repeat once, 1 = repeat twice, etc).
 

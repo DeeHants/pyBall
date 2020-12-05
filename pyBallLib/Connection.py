@@ -10,7 +10,8 @@ class Connection:
         self.serial_pattern = re.compile('[0-9a-f]{16}', re.IGNORECASE)
 
         self.ser = serial.Serial(port, 38400)
-        pass
+
+        self.running_sum = 0 # Initialise the running sum
 
     def target_device(self, serial, enable):
         self.send(Ops.TARGET_DEVICE, 0x0000, 0x0000, [serial, 0x1 if enable else 0x0])
@@ -58,6 +59,9 @@ class Connection:
         sum = op + addr + addr2 + length
         for block in data_array: sum += block
         sum &= 0xffff
+
+        # Running sum (used for images)
+        for block in data_array: self.running_sum += block
 
         # Convert to an array of bytes supported by pack
         data_bytes = struct.pack('<' + (length * 'H'), *data_array)

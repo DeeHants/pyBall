@@ -36,6 +36,9 @@ class Sequence:
 
         self.bank.zone.target(connection, True)
 
+        # Reset the running sum for image checksum
+        connection.running_sum = 0
+
         # Upload each image
         offset = Addr.DATA_BASE
         for image in self.images:
@@ -56,7 +59,12 @@ class Sequence:
                 # No image
                 connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs, [0, 0, offset, 0x00FF]) # FIXME What is 0, and 0xff?
 
-        connection.send(Ops.STORE, 0x2003, bs, [0x00BA, 0xBB88]) # 186, 48008 #TODO what??
+        # Save the image checksum
+        sum = connection.running_sum
+        sum_hi = int((sum & 0xffff0000) >> 16)
+        sum_lo = (sum & 0x0000ffff)
+        connection.send(Ops.STORE, 0x2003, bs, [sum_hi, sum_lo])
+
         self.bank.zone.target(connection, False)
 
         self.bank.zone.target(connection, True)
