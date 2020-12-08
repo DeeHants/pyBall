@@ -17,8 +17,11 @@ class Position:
         self.frames = 10
 
     def uploadbulk(self, connection):
-        print("Uploading B" + str(self.sequence.bank.index) + "S" +
-              str(self.sequence.index) + "P" + str(self.index))
+        print("Uploading B{bank}S{sequence}P{position}".format(
+            bank=self.sequence.bank.index,
+            sequence=self.sequence.index,
+            position=self.index,
+        ))
 
         data = [
             self.image,
@@ -44,8 +47,11 @@ class Position:
         connection.send(Ops.STORE, base, bs, data)
 
     def upload(self, connection):
-        print("Uploading B" + str(self.sequence.bank.index) + "S" +
-              str(self.sequence.index) + "P" + str(self.index) + "b")
+        print("Uploading B{bank}S{sequence}P{position}b".format(
+            bank=self.sequence.bank.index,
+            sequence=self.sequence.index,
+            position=self.index,
+        ))
 
         base = Addr.POSITION_BASE + (self.index << 4)
         bs = self.sequence.bs()

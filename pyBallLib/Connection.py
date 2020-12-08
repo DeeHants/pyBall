@@ -85,6 +85,9 @@ class Connection:
 
         # Print the result
         hex = " ".join(format(x, '02X') for x in bytearray(result))
-        print("Length " + str(len(result)) + ": " + hex)
+        print("Length {length}: {data}".format(
+            length=len(result),
+            data=hex,
+        ))
 
         self.ser.write(result)

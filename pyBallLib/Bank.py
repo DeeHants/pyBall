@@ -30,7 +30,9 @@ class Bank:
         return self.index << 4
 
     def upload(self, connection):
-        print("Uploading B" + str(self.index))
+        print("Uploading B{bank}".format(
+            bank=self.index,
+        ))
 
         # Generate the base BS address
         bank_base = self.index << 4

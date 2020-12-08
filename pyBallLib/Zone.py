@@ -33,7 +33,11 @@ class Zone:
         for offset in [14, 12, 10, 8, 6, 4, 2, 0]:
             zone_serial_bytes.append(int(self.serial[offset:offset + 2], 16))
 
-        print("Assigning " + device_serial + " to " + self.serial + ":" + str(self.channel))
+        print("Assigning {device_serial} to {zone_serial}:{zone_channel}".format(
+            device_serial=device_serial,
+            zone_serial=self.serial,
+            zone_channel=self.channel,
+        ))
 
         # Select the device we're talking to
         connection.target_device(device_serial, True)
@@ -128,6 +132,7 @@ class Zone:
             raise Exception("zone serial has not been set")
 
         # Set the initial state
+        print("Setting initial state")
         self.target(connection, True)
         self.chase_banks = False
         self.chase_sequences = False

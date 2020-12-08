@@ -33,7 +33,10 @@ class Sequence:
         return self.bank.bs() | self.index
 
     def upload(self, connection):
-        print("Uploading B" + str(self.bank.index) + "S" + str(self.index))
+        print("Uploading B{bank}S{sequence}".format(
+            bank=self.bank.index,
+            sequence=self.index,
+        ))
 
         self.bank.zone.target(connection, True)
 
@@ -46,7 +49,10 @@ class Sequence:
             image.upload(connection, offset)
             offset += image.length
 
-        print("Uploading B" + str(self.bank.index) + "S" + str(self.index) + "Imd")
+        print("Uploading B{bank}S{sequence}Imd".format(
+            bank=self.bank.index,
+            sequence=self.index,
+        ))
         # Set the image metadata
         offset = Addr.DATA_BASE
         bs = self.bs()
@@ -77,7 +83,10 @@ class Sequence:
             position.uploadbulk(connection)
 
         # Blank out the next position
-        print("Uploading B" + str(self.bank.index) + "S" + str(self.index) + "PX")
+        print("Uploading B{bank}S{sequence}PX".format(
+            bank=self.bank.index,
+            sequence=self.index,
+        ))
         connection.send(Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs,
                         [0x0000, 0x0100, 0x0000, 0x00FF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1023, 0x0201, 0x0001, 0x0000, 0x0009])
 

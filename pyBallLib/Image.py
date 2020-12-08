@@ -23,8 +23,11 @@ class Image:
         self.width = 100
 
     def upload(self, connection, offset):
-        print("Uploading B" + str(self.sequence.bank.index) + "S" +
-              str(self.sequence.index) + "I" + str(self.index))
+        print("Uploading B{bank}S{sequence}I{image}".format(
+            bank=self.sequence.bank.index,
+            sequence=self.sequence.index,
+            image=self.index,
+        ))
         # Set the image
         bs = self.sequence.bs()
         for index in range(0, len(self.data), 0x10):

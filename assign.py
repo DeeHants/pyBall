@@ -15,7 +15,11 @@ connection.target_zone(zone_serial, zone_channel, False)
 
 zone = pyBallLib.Zone(zone_serial, zone_channel)
 for device_serial in device_serials:
-    print("Assigning " + device_serial + " to " + zone_serial + ":" + str(zone_channel))
+    print("Assigning {device_serial} to {zone_serial}:{zone_channel}".format(
+        device_serial=device_serial,
+        zone_serial=zone_serial,
+        zone_channel=zone_channel,
+    ))
     zone.assigndevice(connection, device_serial)
 
 # Not talking to anything again
