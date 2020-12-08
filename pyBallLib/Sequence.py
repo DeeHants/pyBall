@@ -37,7 +37,10 @@ class Sequence:
             bank=self.bank.index,
             sequence=self.index,
         ))
+        self.upload_images(connection)
+        self.upload_positions(connection)
 
+    def upload_images(self, connection):
         self.bank.zone.target(connection, True)
 
         # Reset the running sum for image checksum
@@ -68,6 +71,10 @@ class Sequence:
                 connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs,
                                 [0, 0, offset, 0x00FF])  # FIXME What is 0, and 0xff?
 
+        print("Uploading B{bank}S{sequence}Ics".format(
+            bank=self.bank.index,
+            sequence=self.index,
+        ))
         # Save the image checksum
         sum = connection.running_sum
         sum_hi = int((sum & 0xffff0000) >> 16)
@@ -76,6 +83,7 @@ class Sequence:
 
         self.bank.zone.target(connection, False)
 
+    def upload_positions(self, connection):
         self.bank.zone.target(connection, True)
 
         # Upload each position
@@ -87,6 +95,7 @@ class Sequence:
             bank=self.bank.index,
             sequence=self.index,
         ))
+        bs = self.bs()
         connection.send(Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs,
                         [0x0000, 0x0100, 0x0000, 0x00FF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1023, 0x0201, 0x0001, 0x0000, 0x0009])
 
