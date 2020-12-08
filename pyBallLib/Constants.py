@@ -8,6 +8,7 @@ class Ops:
     X8 = 0x08
     REINIT = 0xFF
 
+
 class Addr:
     ZERO = 0x0000
     POSITION_BASE = 0x2100

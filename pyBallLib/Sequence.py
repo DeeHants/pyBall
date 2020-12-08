@@ -3,6 +3,7 @@ from .Image import Image
 from .RTIBlock import RTIBlock
 from .Position import Position
 
+
 class Sequence:
     def __init__(self, bank, index):
         self.bank = bank
@@ -32,7 +33,7 @@ class Sequence:
         return self.bank.bs() | self.index
 
     def upload(self, connection):
-        print('Uploading B' + str(self.bank.index) + 'S' + str(self.index))
+        print("Uploading B" + str(self.bank.index) + "S" + str(self.index))
 
         self.bank.zone.target(connection, True)
 
@@ -45,7 +46,7 @@ class Sequence:
             image.upload(connection, offset)
             offset += image.length
 
-        print('Uploading B' + str(self.bank.index) + 'S' + str(self.index) + 'Imd')
+        print("Uploading B" + str(self.bank.index) + "S" + str(self.index) + "Imd")
         # Set the image metadata
         offset = Addr.DATA_BASE
         bs = self.bs()
@@ -53,11 +54,13 @@ class Sequence:
             if index < len(self.images):
                 # Image entry
                 image = self.images[index]
-                connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs, [image.width, 0, offset, 0x00FF]) # FIXME What is 0, and 0xff?
+                connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs,
+                                [image.width, 0, offset, 0x00FF])  # FIXME What is 0, and 0xff?
                 offset += image.length
             else:
                 # No image
-                connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs, [0, 0, offset, 0x00FF]) # FIXME What is 0, and 0xff?
+                connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs,
+                                [0, 0, offset, 0x00FF])  # FIXME What is 0, and 0xff?
 
         # Save the image checksum
         sum = connection.running_sum
@@ -74,8 +77,9 @@ class Sequence:
             position.uploadbulk(connection)
 
         # Blank out the next position
-        print('Uploading B' + str(self.bank.index) + 'S' + str(self.index) + 'PX')
-        connection.send(Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs, [0x0000, 0x0100, 0x0000, 0x00FF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1023, 0x0201, 0x0001, 0x0000, 0x0009])
+        print("Uploading B" + str(self.bank.index) + "S" + str(self.index) + "PX")
+        connection.send(Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs,
+                        [0x0000, 0x0100, 0x0000, 0x00FF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1023, 0x0201, 0x0001, 0x0000, 0x0009])
 
         # Upload each position (additional attributes)
         for position in self.positions:

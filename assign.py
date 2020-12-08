@@ -13,9 +13,9 @@ connection = pyBallLib.Connection(serial_port)
 # Not talking to anything
 connection.target_zone(zone_serial, zone_channel, False)
 
-zone = pyBallLib.Zone(zone_serial,zone_channel)
+zone = pyBallLib.Zone(zone_serial, zone_channel)
 for device_serial in device_serials:
-    print('Assigning ' + device_serial + ' to ' + zone_serial + ':' + str(zone_channel))
+    print("Assigning " + device_serial + " to " + zone_serial + ":" + str(zone_channel))
     zone.assigndevice(connection, device_serial)
 
 # Not talking to anything again

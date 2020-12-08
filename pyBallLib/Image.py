@@ -2,6 +2,7 @@ from .Constants import Ops, Addr
 
 import struct
 
+
 class Image:
     def __init__(self, sequence, index, image_filename=''):
         self.sequence = sequence
@@ -18,11 +19,12 @@ class Image:
             self.data.append(struct.unpack_from('<H', image_bytes, index * 2)[0])
 
         self.length = len(self.data)
-        self.height = 73 #TODO needed?
+        self.height = 73  # TODO needed?
         self.width = 100
 
     def upload(self, connection, offset):
-        print('Uploading B' + str(self.sequence.bank.index) + 'S' + str(self.sequence.index) + 'I' + str(self.index))
+        print("Uploading B" + str(self.sequence.bank.index) + "S" +
+              str(self.sequence.index) + "I" + str(self.index))
         # Set the image
         bs = self.sequence.bs()
         for index in range(0, len(self.data), 0x10):

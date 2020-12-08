@@ -12,20 +12,20 @@ sequence = zone.bank(0).sequence(0)
 
 # B0S0P0 black mouse clockwise
 sequence.images.append(pyBallLib.Image(sequence, 8, 'mouseb.pbi'))
-position = sequence.append_position() # Create B0S0P0
+position = sequence.append_position()  # Create B0S0P0
 position.image = 8
 position.columns = 355
 position.gap = 255
-position.scroll = 2 # LTR
+position.scroll = 2  # LTR
 position.frames = 500
 
 # B0S0P1 red mouse anti-clockwise
 sequence.images.append(pyBallLib.Image(sequence, 9, 'mouser.pbi'))
-position = sequence.append_position() # Create B0S0P1
+position = sequence.append_position()  # Create B0S0P1
 position.image = 9
 position.columns = 355
 position.gap = 255
-position.scroll = 353 # RTL
+position.scroll = 353  # RTL
 position.frames = 500
 
 # Second sequence
@@ -34,7 +34,7 @@ sequence.repeat = 10
 
 # B0S0P0 black mouse clockwise
 sequence.images.append(pyBallLib.Image(sequence, 8, 'mouseb.pbi'))
-position = sequence.append_position() # Create B1S1P0
+position = sequence.append_position()  # Create B1S1P0
 position.image = 8
 position.columns = 300
 position.gap = 0
@@ -43,7 +43,7 @@ position.frames = 10
 
 # B0S0P1 red mouse anti-clockwise
 sequence.images.append(pyBallLib.Image(sequence, 9, 'mouser.pbi'))
-position = sequence.append_position() # Create B1S1P1
+position = sequence.append_position()  # Create B1S1P1
 position.image = 9
 position.columns = 300
 position.gap = 0
