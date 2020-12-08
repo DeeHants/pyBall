@@ -10,7 +10,10 @@ class Connection:
     def __init__(self, port):
         self.serial_pattern = re.compile('[0-9a-f]{16}', re.IGNORECASE)
 
-        self.ser = serial.Serial(port, 38400)
+        # Connect to the serial port
+        self.ser = None
+        if port != '':
+            self.ser = serial.Serial(port, 38400)
 
         self.running_sum = 0  # Initialise the running sum
 
@@ -90,4 +93,6 @@ class Connection:
             data=hex,
         ))
 
-        self.ser.write(result)
+        # Send the data to the serial port
+        if self.ser:
+            self.ser.write(result)
