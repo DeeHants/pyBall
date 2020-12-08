@@ -155,7 +155,6 @@ class Zone:
         for bank in self._banks:
             if bank:
                 bank.upload(connection)
-                pass
 
         # Set the final state
         self.target(connection, True)
