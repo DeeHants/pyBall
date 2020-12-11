@@ -19,6 +19,16 @@ class Sequence:
         # Empty position list
         self.positions = []
 
+    def append_image(self, width, image_filename='', image_data=[], image_bytes=[]):
+        image = Image(self, len(self.images), width, image_filename, image_data, image_bytes)
+        self.images.append(image)
+        self._renumber_images()
+        return image
+
+    def _renumber_images(self):
+        for index in range(len(self.images)):
+            self.images[index].index = index
+
     def append_position(self):
         position = Position(self, 0)
         self.positions.append(position)
