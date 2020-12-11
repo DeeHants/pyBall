@@ -1,6 +1,6 @@
-from .Constants import Ops, Addr
-
 import struct
+
+from .Constants import Ops, Addr
 
 
 class Image:

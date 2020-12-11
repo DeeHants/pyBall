@@ -1,7 +1,7 @@
+import datetime
+
 from .Constants import Ops, Addr
 from .Bank import Bank
-
-import datetime
 
 
 class Zone:
