@@ -73,9 +73,8 @@ class Sequence:
             if index < len(self.images):
                 # Image entry
                 image = self.images[index]
-                connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs,
-                                [image.width, 0, offset, 0x00FF])  # FIXME What is 0, and 0xff?
-                offset += image.length
+                image.upload_metadata(connection)
+                offset = image.offset + image.length
             else:
                 # No image
                 connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs,

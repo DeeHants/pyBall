@@ -8,8 +8,9 @@ class RTIBlock:
 
         self.data = []
         self.length = 0
-        self.height = 73  # TODO needed?
         self.width = 73
+        self.height = 73
+        self.offset = 0  # Updated when uploaded
 
     def upload(self, connection, offset):
         print("Uploading B{bank}S{sequence}R{image}".format(
@@ -17,6 +18,12 @@ class RTIBlock:
             sequence=self.sequence.index,
             image=self.index,
         ))
-        # Set the image
-        # for index in range(0, len(self.data), 0x10):
-        #     connection.send(Constants.OP_SET_ADDR, offset + index, 0x0000, self.data[index:index + 0x10])
+        # No image to upload
+
+        # Store the offset for the metadata
+        self.offset = offset
+
+    def upload_metadata(self, connection):
+        bs = self.sequence.bs()
+        connection.send(Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs,
+                        [self.width, 0, self.offset, 0x00FF])  # FIXME What is 0, and 0xff?

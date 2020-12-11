@@ -35,6 +35,7 @@ class Image:
         self.length = len(self.data)
         self.width = width
         self.height = 73
+        self.offset = 0  # Updated when uploaded
 
     def upload(self, connection, offset):
         print("Uploading B{bank}S{sequence}I{image}".format(
@@ -46,3 +47,11 @@ class Image:
         bs = self.sequence.bs()
         for index in range(0, len(self.data), 0x10):
             connection.send(Ops.STORE, offset + index, bs, self.data[index:index + 0x10])
+
+        # Store the offset for the metadata
+        self.offset = offset
+
+    def upload_metadata(self, connection):
+        bs = self.sequence.bs()
+        connection.send(Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs,
+                        [self.width, 0, self.offset, 0x00FF])  # FIXME What is 0, and 0xff?
