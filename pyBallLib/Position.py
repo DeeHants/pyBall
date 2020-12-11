@@ -10,6 +10,7 @@ class Position:
         self.image = 0
         self.columns = 73
         self.gap = 0
+        self.brilliance = 0xff
         self.scroll = 0
         self.offset = 0
         self.repeat_index = 0
@@ -27,7 +28,7 @@ class Position:
             self.image,
             self.columns,
             self.gap,
-            0xff,  # Brilliance
+            self.brilliance,
             self.scroll,
             self.offset,
             self.repeat_index,
