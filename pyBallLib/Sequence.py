@@ -30,12 +30,12 @@ class Sequence:
             self.images[index].index = index
 
     def append_position(self):
-        position = Position(self, 0)
+        position = Position(self, len(self.positions))
         self.positions.append(position)
-        self.renumber_positions()
+        self._renumber_positions()
         return position
 
-    def renumber_positions(self):
+    def _renumber_positions(self):
         for index in range(len(self.positions)):
             self.positions[index].index = index
 
