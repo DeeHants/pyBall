@@ -64,33 +64,57 @@ second_coords = None
 minute_coords = None
 hour_coords = None
 while True:
-    # Turn off the previous pixels
-    if hour_coords != None:
-        image.set_pixel(hour_coords[0], hour_coords[1], False, False, False)
-        image.upload_col(connection, hour_coords[0])
-    if minute_coords != None:
-        image.set_pixel(minute_coords[0], minute_coords[1], False, False, False)
-        image.upload_col(connection, minute_coords[0])
-    if second_coords != None:
-        image.set_pixel(second_coords[0], second_coords[1], False, False, False)
-        image.upload_col(connection, second_coords[0])
-
-    # Calculate the new pixels
+    # Update for the current time
     now = datetime.datetime.now()
-    second = now.second
-    second_coords = degree_position(second * 6, 30)
-    minute = now.minute + (second / 60.0)  # Force to float
-    minute_coords = degree_position(minute * 6, 25)
-    hour = now.hour + (minute / 60.0)  # Force to float
-    hour_coords = degree_position(hour * 30, 20)
 
-    # Turn them on
-    image.set_pixel(hour_coords[0], hour_coords[1], False, False, True)
-    image.upload_col(connection, hour_coords[0])
-    image.set_pixel(minute_coords[0], minute_coords[1], False, True, False)
-    image.upload_col(connection, minute_coords[0])
-    image.set_pixel(second_coords[0], second_coords[1], True, False, False)
-    image.upload_col(connection, second_coords[0])
+    # Keep an array of update columns
+    changed_columns = []
+
+    # Second hand
+    second = now.second
+    new_second_coords = degree_position(second * 6, 30)
+    if (second_coords != new_second_coords):
+        # If it changed...
+        if second_coords != None:
+            # Clear old pixel
+            image.set_pixel(second_coords[0], second_coords[1], False, False, False) # Off
+            if second_coords[0] not in changed_columns: changed_columns.append(second_coords[0])
+        # Set new pixel
+        image.set_pixel(new_second_coords[0], new_second_coords[1], True, False, False) # Red
+        if new_second_coords[0] not in changed_columns: changed_columns.append(new_second_coords[0])
+        second_coords = new_second_coords
+
+    # Minute hand
+    minute = now.minute + (second / 60.0)  # Force to float
+    new_minute_coords = degree_position(minute * 6, 25)
+    if (minute_coords != new_minute_coords):
+        # If it changed...
+        if minute_coords != None:
+            # Clear old pixel
+            image.set_pixel(minute_coords[0], minute_coords[1], False, False, False) # Off
+            if minute_coords[0] not in changed_columns: changed_columns.append(minute_coords[0])
+        # Set new pixel
+        image.set_pixel(new_minute_coords[0], new_minute_coords[1], False, True, False) # Green
+        if new_minute_coords[0] not in changed_columns: changed_columns.append(new_minute_coords[0])
+        minute_coords = new_minute_coords
+
+    # Hour hand
+    hour = now.hour + (minute / 60.0)  # Force to float
+    new_hour_coords = degree_position(hour * 30, 20)
+    if (hour_coords != new_hour_coords):
+        # If it changed...
+        if hour_coords != None:
+            # Clear old pixel
+            image.set_pixel(hour_coords[0], hour_coords[1], False, False, False) # Off
+            if hour_coords[0] not in changed_columns: changed_columns.append(hour_coords[0])
+        # Set new pixel
+        image.set_pixel(new_hour_coords[0], new_hour_coords[1], False, False, True) # Blue
+        if new_hour_coords[0] not in changed_columns: changed_columns.append(new_hour_coords[0])
+        hour_coords = new_hour_coords
+
+    # Update any changed columns
+    for col in changed_columns:
+        image.upload_col(connection, col)
 
     # Re-upload the entire image
     # image.upload(connection, image.offset)
