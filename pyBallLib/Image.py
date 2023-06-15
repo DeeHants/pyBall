@@ -6,8 +6,9 @@ import struct
 
 from .Constants import Ops, Addr
 
+
 class Image:
-    WORDS_PER_COLUMN = 0x10 # 16x 16-bit words per column
+    WORDS_PER_COLUMN = 0x10  # 16x 16-bit words per column
 
     def __init__(self, sequence, index, width, image_filename='', image_data=[], image_bytes=[]):
         self.sequence = sequence
@@ -48,16 +49,16 @@ class Image:
         for index in range(73):
             pixel_data = (
                 # Red
-                (offset_counter) % self.WORDS_PER_COLUMN, # Word offset
-                int((offset_counter) / self.WORDS_PER_COLUMN), # Bit position
+                (offset_counter) % self.WORDS_PER_COLUMN,  # Word offset
+                int((offset_counter) / self.WORDS_PER_COLUMN),  # Bit position
 
                 # Green
-                (offset_counter + 1) % self.WORDS_PER_COLUMN, # Word offset
-                int((offset_counter + 1) / self.WORDS_PER_COLUMN), # Bit position
+                (offset_counter + 1) % self.WORDS_PER_COLUMN,  # Word offset
+                int((offset_counter + 1) / self.WORDS_PER_COLUMN),  # Bit position
 
                 # Blue
-                (offset_counter + 2) % self.WORDS_PER_COLUMN, # Word offset
-                int((offset_counter + 2) / self.WORDS_PER_COLUMN), # Bit position
+                (offset_counter + 2) % self.WORDS_PER_COLUMN,  # Word offset
+                int((offset_counter + 2) / self.WORDS_PER_COLUMN),  # Bit position
             )
             self.pixel_map.append(pixel_data)
 
@@ -110,7 +111,8 @@ class Image:
         # Set the image
         bs = self.sequence.bs()
         for index in range(0, len(self.data), self.WORDS_PER_COLUMN):
-            connection.send(Ops.STORE, offset + index, bs, self.data[index:index + self.WORDS_PER_COLUMN])
+            connection.send(Ops.STORE, offset + index, bs,
+                            self.data[index:index + self.WORDS_PER_COLUMN])
 
         # Store the offset for the metadata
         self.offset = offset

@@ -1,6 +1,6 @@
-import time
-import math
 import datetime
+import math
+import time
 
 import pyBallLib
 
@@ -39,7 +39,6 @@ COLOUR_BLACK = (0, 0, 0)
 COLOUR_RED = (1, 0, 0)
 COLOUR_GREEN = (0, 1, 0)
 COLOUR_BLUE = (0, 0, 1)
-
 
 # Draw the clock face
 image.set_pixel(36, 36, COLOUR_WHITE)  # Center
@@ -85,11 +84,13 @@ while True:
         # If it changed...
         if second_coords != None:
             # Clear old pixel
-            image.set_pixel(second_coords[0], second_coords[1], COLOUR_BLACK) # Off
-            if second_coords[0] not in changed_columns: changed_columns.append(second_coords[0])
+            image.set_pixel(second_coords[0], second_coords[1], COLOUR_BLACK)  # Off
+            if second_coords[0] not in changed_columns:
+                changed_columns.append(second_coords[0])
         # Set new pixel
-        image.set_pixel(new_second_coords[0], new_second_coords[1], COLOUR_RED) # Red
-        if new_second_coords[0] not in changed_columns: changed_columns.append(new_second_coords[0])
+        image.set_pixel(new_second_coords[0], new_second_coords[1], COLOUR_RED)  # Red
+        if new_second_coords[0] not in changed_columns:
+            changed_columns.append(new_second_coords[0])
         second_coords = new_second_coords
 
     # Minute hand
@@ -99,11 +100,13 @@ while True:
         # If it changed...
         if minute_coords != None:
             # Clear old pixel
-            image.set_pixel(minute_coords[0], minute_coords[1], COLOUR_BLACK) # Off
-            if minute_coords[0] not in changed_columns: changed_columns.append(minute_coords[0])
+            image.set_pixel(minute_coords[0], minute_coords[1], COLOUR_BLACK)  # Off
+            if minute_coords[0] not in changed_columns:
+                changed_columns.append(minute_coords[0])
         # Set new pixel
-        image.set_pixel(new_minute_coords[0], new_minute_coords[1], COLOUR_GREEN) # Green
-        if new_minute_coords[0] not in changed_columns: changed_columns.append(new_minute_coords[0])
+        image.set_pixel(new_minute_coords[0], new_minute_coords[1], COLOUR_GREEN)  # Green
+        if new_minute_coords[0] not in changed_columns:
+            changed_columns.append(new_minute_coords[0])
         minute_coords = new_minute_coords
 
     # Hour hand
@@ -113,11 +116,13 @@ while True:
         # If it changed...
         if hour_coords != None:
             # Clear old pixel
-            image.set_pixel(hour_coords[0], hour_coords[1], COLOUR_BLACK) # Off
-            if hour_coords[0] not in changed_columns: changed_columns.append(hour_coords[0])
+            image.set_pixel(hour_coords[0], hour_coords[1], COLOUR_BLACK)  # Off
+            if hour_coords[0] not in changed_columns:
+                changed_columns.append(hour_coords[0])
         # Set new pixel
-        image.set_pixel(new_hour_coords[0], new_hour_coords[1], COLOUR_BLUE) # Blue
-        if new_hour_coords[0] not in changed_columns: changed_columns.append(new_hour_coords[0])
+        image.set_pixel(new_hour_coords[0], new_hour_coords[1], COLOUR_BLUE)  # Blue
+        if new_hour_coords[0] not in changed_columns:
+            changed_columns.append(new_hour_coords[0])
         hour_coords = new_hour_coords
 
     # Update any changed columns

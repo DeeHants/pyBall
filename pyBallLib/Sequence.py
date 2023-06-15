@@ -4,8 +4,8 @@ __author__ = "Deanna Earley"
 
 from .Constants import Ops, Addr
 from .Image import Image
-from .RTIBlock import RTIBlock
 from .Position import Position
+from .RTIBlock import RTIBlock
 
 
 class Sequence:

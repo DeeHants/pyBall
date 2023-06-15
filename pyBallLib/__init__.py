@@ -3,9 +3,9 @@ __license__ = "This source code is subject to the BSD 3-Clause license. See Lice
 __author__ = "Deanna Earley"
 
 # Import all package modules
-from .Constants import Ops, Addr
 from .Bank import Bank
 from .Connection import Connection
+from .Constants import Ops, Addr
 from .Image import Image
 from .Position import Position
 from .RTIBlock import RTIBlock

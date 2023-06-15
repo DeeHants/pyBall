@@ -5,7 +5,6 @@ __author__ = "Deanna Earley"
 import datetime
 
 from .Constants import Ops, Addr
-from .Bank import Bank
 
 
 class Zone:
