@@ -62,7 +62,11 @@ class Image:
             if index == 64:
                 offset_counter += 5
 
-    def set_pixel(self, x, y, r, g, b):
+    def set_pixel(self, x, y, colour):
+        # Check the tuple length
+        if len(colour) != 3:
+            raise ValueError("colour value must contain 3 elements")
+
         x_offset = (x * self.WORDS_PER_COLUMN)
         pixel_data = self.pixel_map[y]
 
@@ -70,7 +74,7 @@ class Image:
         index = x_offset + pixel_data[0]
         pattern = 1 << pixel_data[1]
         pattern2 = (~pattern) & 0xffff
-        if r:
+        if colour[0]:
             self.data[index] |= pattern
         else:
             self.data[index] &= pattern2
@@ -79,7 +83,7 @@ class Image:
         index = x_offset + pixel_data[2]
         pattern = 1 << pixel_data[3]
         pattern2 = (~pattern) & 0xffff
-        if g:
+        if colour[1]:
             self.data[index] |= pattern
         else:
             self.data[index] &= pattern2
@@ -88,7 +92,7 @@ class Image:
         index = x_offset + pixel_data[4]
         pattern = 1 << pixel_data[5]
         pattern2 = (~pattern) & 0xffff
-        if b:
+        if colour[2]:
             self.data[index] |= pattern
         else:
             self.data[index] &= pattern2
