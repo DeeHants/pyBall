@@ -37,6 +37,61 @@ class Image:
         self.height = 73
         self.offset = 0  # Updated when uploaded
 
+        # Generate the pixel map
+        self.pixel_map = []
+        offset_counter = 0
+        for index in range(73):
+            pixel_data = (
+                # Red
+                (offset_counter) % 0x10,
+                int((offset_counter) / 0x10),
+
+                # Green
+                (offset_counter + 1) % 0x10,
+                int((offset_counter + 1) / 0x10),
+
+                # Blue
+                (offset_counter + 2) % 0x10,
+                int((offset_counter + 2) / 0x10),
+            )
+            self.pixel_map.append(pixel_data)
+
+            # Increment the count, allowing for the 5 bit gap between the 65th and 66th pixel
+            offset_counter += 3
+            if index == 64:
+                offset_counter += 5
+
+    def set_pixel(self, x, y, r, g, b):
+        x_offset = (x * 0x10)
+        pixel_data = self.pixel_map[y]
+
+        # Red
+        index = x_offset + pixel_data[0]
+        pattern = 1 << pixel_data[1]
+        pattern2 = (~pattern) & 0xffff
+        if r:
+            self.data[index] |= pattern
+        else:
+            self.data[index] &= pattern2
+
+        # Green
+        index = x_offset + pixel_data[2]
+        pattern = 1 << pixel_data[3]
+        pattern2 = (~pattern) & 0xffff
+        if g:
+            self.data[index] |= pattern
+        else:
+            self.data[index] &= pattern2
+
+        # Blue
+        index = x_offset + pixel_data[4]
+        pattern = 1 << pixel_data[5]
+        pattern2 = (~pattern) & 0xffff
+        if b:
+            self.data[index] |= pattern
+        else:
+            self.data[index] &= pattern2
+
     def upload(self, connection, offset):
         print("Uploading B{bank}S{sequence}I{image}".format(
             bank=self.sequence.bank.index,
@@ -50,6 +105,19 @@ class Image:
 
         # Store the offset for the metadata
         self.offset = offset
+
+    def upload_col(self, connection, col):
+        x_offset = (col * 0x10)
+
+        print("Uploading B{bank}S{sequence}I{image}C{col}".format(
+            bank=self.sequence.bank.index,
+            sequence=self.sequence.index,
+            image=self.index,
+            col=col,
+        ))
+        # Set the image column
+        connection.send(Ops.STORE, self.offset + x_offset, self.sequence.bs(),
+                        self.data[x_offset:x_offset + 0x10])
 
     def upload_metadata(self, connection):
         bs = self.sequence.bs()
