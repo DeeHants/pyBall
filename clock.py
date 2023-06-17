@@ -8,10 +8,9 @@ serial_port = 'COM3'
 zone_serial = '1026CCE9FBFDFBD8'
 zone_channel = 0
 
-connection = pyBallLib.Connection(serial_port)
-
 # Create the zone and sequence
-zone = pyBallLib.Zone(zone_serial, zone_channel)
+connection = pyBallLib.Connection(serial_port)
+zone = pyBallLib.Zone(connection, zone_serial, zone_channel)
 sequence = zone.bank(0).sequence(0)
 
 
@@ -61,11 +60,11 @@ position.columns = ((image.width + gap) * faces) - terminus
 position.gap = gap
 
 # Upload the data
-zone.upload(connection)
+zone.upload()
 
 # Allow it to restart
 time.sleep(10)
-image.sequence.bank.zone.target(connection, True)
+zone.target(True)
 
 second_coords = None
 minute_coords = None
@@ -127,10 +126,10 @@ while True:
 
     # Update any changed columns
     for col in changed_columns:
-        image.upload_col(connection, col)
+        image.upload_col(col)
 
     # Re-upload the entire image
-    # image.upload(connection, image.offset)
+    # image.upload(image.offset)
 
     # Sleep 500ms
     time.sleep(1)

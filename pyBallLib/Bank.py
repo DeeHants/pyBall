@@ -8,7 +8,8 @@ from .Sequence import Sequence
 
 class Bank:
     def __init__(self, zone, index):
-        self.zone = zone
+        self._zone = zone
+        self._connection = zone._connection
         self.index = index
 
         self.repeat = 1
@@ -33,7 +34,7 @@ class Bank:
     def bs(self):
         return self.index << 4
 
-    def upload(self, connection):
+    def upload(self):
         print("Uploading B{bank}".format(
             bank=self.index,
         ))
@@ -42,20 +43,21 @@ class Bank:
         bank_base = self.index << 4
 
         # Reset sequence states
-        self.zone.target(connection, True)
+        self._zone.target(True)
+
         for index in range(0x10):
-            connection.send(Ops.STORE, 0x2000, self.bs() | index, [2])  # FIXME what is state 2?
-            connection.send(Ops.X8,  0x0000, 0x0000, [1])  # FIXME What is op 8?
-        self.zone.target(connection, False)
+            self._connection.send(Ops.STORE, 0x2000, self.bs() | index, [2])  # FIXME what is state 2?
+            self._connection.send(Ops.X8,  0x0000, 0x0000, [1])  # FIXME What is op 8?
+        self._zone.target(False)
 
         # Upload each sequence
         for sequence in self._sequences:
             if sequence:
-                sequence.upload(connection)
+                sequence.upload()
 
         # Set the state of uploaded sequences
-        self.zone.target(connection, True)
+        self._zone.target(True)
         for sequence in self._sequences:
             if sequence:
-                connection.send(Ops.STORE, 0x2000, sequence.bs(), [3])  # FIXME what is state 2?
-        self.zone.target(connection, False)
+                self._connection.send(Ops.STORE, 0x2000, sequence.bs(), [3])  # FIXME what is state 2?
+        self._zone.target(False)

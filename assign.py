@@ -9,18 +9,19 @@ device_serials = [
 ]
 
 connection = pyBallLib.Connection(serial_port)
+zone = pyBallLib.Zone(connection, zone_serial, zone_channel)
 
 # Not talking to anything
-connection.target_zone(zone_serial, zone_channel, False)
+zone.target(False)
 
-zone = pyBallLib.Zone(zone_serial, zone_channel)
+# Assign each device to the zone
 for device_serial in device_serials:
     print("Assigning {device_serial} to {zone_serial}:{zone_channel}".format(
         device_serial=device_serial,
         zone_serial=zone_serial,
         zone_channel=zone_channel,
     ))
-    zone.assigndevice(connection, device_serial)
+    zone.assigndevice(device_serial)
 
 # Not talking to anything again
-connection.target_zone(zone_serial, zone_channel, False)
+zone.target(False)

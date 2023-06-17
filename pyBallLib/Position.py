@@ -7,8 +7,10 @@ from .Constants import Ops, Addr
 
 class Position:
     def __init__(self, sequence, index):
-        self.bank = sequence.bank
-        self.sequence = sequence
+        self._sequence = sequence
+        self._bank = sequence._bank
+        self._zone = sequence._bank._zone
+        self._connection = sequence._bank._zone._connection
         self.index = index
 
         self.image = 0
@@ -21,10 +23,10 @@ class Position:
         self.repeat = 0
         self.frames = 10
 
-    def uploadbulk(self, connection):
+    def uploadbulk(self):
         print("Uploading B{bank}S{sequence}P{position}".format(
-            bank=self.sequence.bank.index,
-            sequence=self.sequence.index,
+            bank=self._bank.index,
+            sequence=self._sequence.index,
             position=self.index,
         ))
 
@@ -48,17 +50,17 @@ class Position:
         ]
 
         base = Addr.POSITION_BASE + (self.index << 4)
-        bs = self.sequence.bs()
-        connection.send(Ops.STORE, base, bs, data)
+        bs = self._sequence.bs()
+        self._connection.send(Ops.STORE, base, bs, data)
 
-    def upload(self, connection):
+    def upload(self):
         print("Uploading B{bank}S{sequence}P{position}b".format(
-            bank=self.sequence.bank.index,
-            sequence=self.sequence.index,
+            bank=self._bank.index,
+            sequence=self._sequence.index,
             position=self.index,
         ))
 
         base = Addr.POSITION_BASE + (self.index << 4)
-        bs = self.sequence.bs()
-        connection.send(Ops.STORE, base + 0x6, bs, [self.repeat_index])
-        connection.send(Ops.STORE, base + 0x7, bs, [self.repeat])
+        bs = self._sequence.bs()
+        self._connection.send(Ops.STORE, base + 0x6, bs, [self.repeat_index])
+        self._connection.send(Ops.STORE, base + 0x7, bs, [self.repeat])

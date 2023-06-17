@@ -5,7 +5,8 @@ zone_serial = '1026CCE9FBFDFBD8'
 zone_channel = 0
 
 # Create the zone
-zone = pyBallLib.Zone(zone_serial, zone_channel)
+connection = pyBallLib.Connection(serial_port)
+zone = pyBallLib.Zone(connection, zone_serial, zone_channel)
 
 # First sequence
 sequence = zone.bank(0).sequence(0)
@@ -51,5 +52,5 @@ position.scroll = 0
 position.frames = 10
 
 # Upload the data
-connection = pyBallLib.Connection(serial_port)
-zone.upload(connection)
+zone.updatestate()
+zone.upload()

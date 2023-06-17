@@ -5,13 +5,16 @@ __author__ = "Deanna Earley"
 import datetime
 
 from .Constants import Ops, Addr
+from .Bank import Bank
 
 
 class Zone:
-    def __init__(self, serial='', channel=0):
+    def __init__(self, connection, serial='', channel=0):
+        self._connection = connection
         self.name = ""
         self.serial = serial
         self.channel = channel
+
         self.enabled = True
         self.chase_banks = True
         self.chase_bank_max = 4
@@ -27,9 +30,9 @@ class Zone:
         for index in range(4):
             self._banks.append(Bank(self, index))
 
-    def assigndevice(self, connection, device_serial=''):
+    def assigndevice(self, device_serial=''):
         # Not talking to anything
-        self.target(connection, False)
+        self.target(False)
 
         # Part of the assignation needs the zone serial as individual bytes
         zone_serial_bytes = []
@@ -43,20 +46,20 @@ class Zone:
         ))
 
         # Select the device we're talking to
-        connection.target_device(device_serial, True)
+        self._connection.target_device(device_serial, True)
 
         # Register this device with the zone serial and channel
-        connection.send(Ops.STORE, 0x010C, 0x0000, 0)
-        connection.send(Ops.STORE, 0x0100, 0x0000, [self.serial, self.channel])
-        connection.send(Ops.STORE, 0x0000, 0x4001, zone_serial_bytes + [self.channel, 2])
+        self._connection.send(Ops.STORE, 0x010C, 0x0000, 0)
+        self._connection.send(Ops.STORE, 0x0100, 0x0000, [self.serial, self.channel])
+        self._connection.send(Ops.STORE, 0x0000, 0x4001, zone_serial_bytes + [self.channel, 2])
 
         # Re-initialise
-        connection.send(Ops.REINIT, 0x0000, 0x0000, 1)
+        self._connection.send(Ops.REINIT, 0x0000, 0x0000, 1)
 
         # Not talking to anything again
-        self.target(connection, False)
+        self.target(False)
 
-    def updatestate(self, connection):
+    def updatestate(self):
         state = 0
         if self.freeze:
             state |= 0x01
@@ -66,11 +69,10 @@ class Zone:
             state |= 0x04
         state |= (self.chase_bank_max << 8)
 
-        connection.send(Ops.X7,  0x0000, 0x0000, [1])  # FIXME what is op 7?
-        connection.send(Ops.STORE, 0x0108, 0x0000,
-                        [self.active_position, self.active_sequence, self.active_bank, state])
-        connection.send(Ops.STORE, 0x010D, 0x0000, [self.scheduler])
-        connection.send(Ops.X8,  0x0000, 0x0000, [1])  # FIXME what is op 8?
+        self._connection.send(Ops.X7,  0x0000, 0x0000, [1])  # FIXME what is op 7?
+        self._connection.send(Ops.STORE, 0x0108, 0x0000, [self.active_position, self.active_sequence, self.active_bank, state])
+        self._connection.send(Ops.STORE, 0x010D, 0x0000, [self.scheduler])
+        self._connection.send(Ops.X8,  0x0000, 0x0000, [1])  # FIXME what is op 8?
 
     def bank(self, index):
         try:
@@ -85,10 +87,10 @@ class Zone:
             # Re-raise IndexError with a more useful message
             raise IndexError("bank index out of range, must be 0-3")
 
-    def target(self, connection, enable):
-        connection.target_zone(self.serial, self.channel, enable)
+    def target(self, enable):
+        self._connection.target_zone(self.serial, self.channel, enable)
 
-    def settime(self, connection, time=0):
+    def settime(self, time=0):
         def packed_bcd_value(value):
             # If it's negative, we need to use a complement value
             neg = value < 0
@@ -123,52 +125,52 @@ class Zone:
             0x8000
         ]
 
-        self.target(connection, True)
-        connection.send(Ops.SETTIME, 0x00be, 0x0000, date_parts)
-        self.target(connection, False)
+        self.target(True)
+        self._connection.send(Ops.SETTIME, 0x00be, 0x0000, date_parts)
+        self.target(False)
 
     def bs(self):
         return 0x0000
 
-    def upload(self, connection):
+    def upload(self):
         if self.serial == '':
             raise Exception("zone serial has not been set")
 
         # Set the initial state
         print("Setting initial state")
-        self.target(connection, True)
+        self.target(True)
         self.chase_banks = False
         self.chase_sequences = False
-        self.updatestate(connection)
-        connection.send(Ops.STORE, 0x0106, 0x0000, [0])  # FIXME what is addr 0x0106?
-        connection.send(Ops.STORE, 0x0107, 0x0000, [0])  # FIXME what is addr 0x0107?
-        connection.send(Ops.STORE, 0x0105, 0x0000, [0])  # FIXME what is addr 0x0105?
+        self.updatestate()
+        self._connection.send(Ops.STORE, 0x0106, 0x0000, [0])  # FIXME what is addr 0x0106?
+        self._connection.send(Ops.STORE, 0x0107, 0x0000, [0])  # FIXME what is addr 0x0107?
+        self._connection.send(Ops.STORE, 0x0105, 0x0000, [0])  # FIXME what is addr 0x0105?
         # FIXME preserve state
         self.chase_banks = True
         self.chase_sequences = True
-        self.updatestate(connection)
+        self.updatestate()
 
         # Sync the time
-        self.settime(connection)
+        self.settime()
 
-        self.target(connection, True)  # FIXME is this no-op needed?
-        self.target(connection, False)
+        self.target(True)  # FIXME is this no-op needed?
+        self.target(False)
 
         # Upload each bank
         for bank in self._banks:
             if bank:
-                bank.upload(connection)
+                bank.upload()
 
         # Set the final state
-        self.target(connection, True)
-        connection.send(Ops.STORE, 0x0200, 0x0000, [0, 0, 0, 0])  # FIXME what is addr 0x0200?
-        connection.send(Ops.STORE, 0x01FF, 0x0000, [0])  # FIXME what is addr 0x01ff?
-        connection.send(Ops.STORE, 0x0180, 0x0000, [0, 0, 0, 0])  # FIXME what is addr 0x0180?
+        self.target(True)
+        self._connection.send(Ops.STORE, 0x0200, 0x0000, [0, 0, 0, 0])  # FIXME what is addr 0x0200?
+        self._connection.send(Ops.STORE, 0x01FF, 0x0000, [0])  # FIXME what is addr 0x01ff?
+        self._connection.send(Ops.STORE, 0x0180, 0x0000, [0, 0, 0, 0])  # FIXME what is addr 0x0180?
         self.chase_banks = False
         self.chase_sequences = False
-        self.updatestate(connection)
-        self.updatestate(connection)  # FIXME 2nd time lucky?
-        self.updatestate(connection)  # FIXME 3rd time lucky?
-        connection.send(Ops.REINIT, 0x0000, 0x0000, [1])  # Re-initialise
-        self.target(connection, False)
-        self.target(connection, False)  # FIXME duplicate
+        self.updatestate()
+        self.updatestate()  # FIXME 2nd time lucky?
+        self.updatestate()  # FIXME 3rd time lucky?
+        self._connection.send(Ops.REINIT, 0x0000, 0x0000, [1])  # Re-initialise
+        self.target(False)
+        self.target(False)  # FIXME duplicate

@@ -10,7 +10,9 @@ from .RTIBlock import RTIBlock
 
 class Sequence:
     def __init__(self, bank, index):
-        self.bank = bank
+        self._bank = bank
+        self._zone = bank._zone
+        self._connection = bank._zone._connection
         self.index = index
 
         self.repeat = 1
@@ -44,30 +46,30 @@ class Sequence:
             self.positions[index].index = index
 
     def bs(self):
-        return self.bank.bs() | self.index
+        return self._bank.bs() | self.index
 
-    def upload(self, connection):
+    def upload(self):
         print("Uploading B{bank}S{sequence}".format(
-            bank=self.bank.index,
+            bank=self._bank.index,
             sequence=self.index,
         ))
-        self.upload_images(connection)
-        self.upload_positions(connection)
+        self.upload_images()
+        self.upload_positions()
 
-    def upload_images(self, connection):
-        self.bank.zone.target(connection, True)
+    def upload_images(self):
+        self._zone.target(True)
 
         # Reset the running sum for image checksum
-        connection.running_sum = 0
+        self._connection.running_sum = 0
 
         # Upload each image
         offset = Addr.DATA_BASE
         for image in self.images:
-            image.upload(connection, offset)
+            image.upload(offset)
             offset += image.length
 
         print("Uploading B{bank}S{sequence}Imd".format(
-            bank=self.bank.index,
+            bank=self._bank.index,
             sequence=self.index,
         ))
         # Set the image metadata
@@ -77,47 +79,45 @@ class Sequence:
             if index < len(self.images):
                 # Image entry
                 image = self.images[index]
-                image.upload_metadata(connection)
+                image.upload_metadata()
                 offset = image.offset + image.length
             else:
                 # No image
-                connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs,
-                                [0, 0, offset, 0x00FF])  # FIXME What is 0, and 0xff?
+                self._connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs, [0, 0, offset, 0x00FF])  # FIXME What is 0, and 0xff?
 
         print("Uploading B{bank}S{sequence}Ics".format(
-            bank=self.bank.index,
+            bank=self._bank.index,
             sequence=self.index,
         ))
         # Save the image checksum
-        sum = connection.running_sum
+        sum = self._connection.running_sum
         sum_hi = int((sum & 0xffff0000) >> 16)
         sum_lo = (sum & 0x0000ffff)
-        connection.send(Ops.STORE, 0x2003, bs, [sum_hi, sum_lo])
+        self._connection.send(Ops.STORE, 0x2003, bs, [sum_hi, sum_lo])
 
-        self.bank.zone.target(connection, False)
+        self._zone.target(False)
 
-    def upload_positions(self, connection):
-        self.bank.zone.target(connection, True)
+    def upload_positions(self):
+        self._zone.target(True)
 
         # Upload each position
         for position in self.positions:
-            position.uploadbulk(connection)
+            position.uploadbulk()
 
         # Blank out the next position
         print("Uploading B{bank}S{sequence}PX".format(
-            bank=self.bank.index,
+            bank=self._bank.index,
             sequence=self.index,
         ))
         bs = self.bs()
-        connection.send(Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs,
-                        [0x0000, 0x0100, 0x0000, 0x00FF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1023, 0x0201, 0x0001, 0x0000, 0x0009])
+        self._connection.send(Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs, [0x0000, 0x0100, 0x0000, 0x00FF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1023, 0x0201, 0x0001, 0x0000, 0x0009])
 
         # Upload each position (additional attributes)
         for position in self.positions:
-            position.upload(connection)
+            position.upload()
 
         # Update sequence parameters
-        connection.send(Ops.STORE, 0x2002, bs, [len(self.positions)])
-        connection.send(Ops.STORE, 0x2001, bs, [self.repeat - 1])
+        self._connection.send(Ops.STORE, 0x2002, bs, [len(self.positions)])
+        self._connection.send(Ops.STORE, 0x2001, bs, [self.repeat - 1])
 
-        self.bank.zone.target(connection, False)
+        self._zone.target(False)

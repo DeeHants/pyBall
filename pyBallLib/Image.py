@@ -11,7 +11,10 @@ class Image:
     WORDS_PER_COLUMN = 0x10  # 16x 16-bit words per column
 
     def __init__(self, sequence, index, width, image_filename='', image_data=[], image_bytes=[]):
-        self.sequence = sequence
+        self._sequence = sequence
+        self._bank = sequence._bank
+        self._zone = sequence._bank._zone
+        self._connection = sequence._bank._zone._connection
         self.index = index
 
         # Open the image file
@@ -102,35 +105,32 @@ class Image:
         else:
             self.data[index] &= pattern2
 
-    def upload(self, connection, offset):
+    def upload(self, offset):
         print("Uploading B{bank}S{sequence}I{image}".format(
-            bank=self.sequence.bank.index,
-            sequence=self.sequence.index,
+            bank=self._bank.index,
+            sequence=self._sequence.index,
             image=self.index,
         ))
         # Set the image
-        bs = self.sequence.bs()
+        bs = self._sequence.bs()
         for index in range(0, len(self.data), self.WORDS_PER_COLUMN):
-            connection.send(Ops.STORE, offset + index, bs,
-                            self.data[index:index + self.WORDS_PER_COLUMN])
+            self._connection.send(Ops.STORE, offset + index, bs, self.data[index:index + self.WORDS_PER_COLUMN])
 
         # Store the offset for the metadata
         self.offset = offset
 
-    def upload_col(self, connection, col):
+    def upload_col(self, col):
         x_offset = (col * self.WORDS_PER_COLUMN)
 
         print("Uploading B{bank}S{sequence}I{image}C{col}".format(
-            bank=self.sequence.bank.index,
-            sequence=self.sequence.index,
+            bank=self._bank.index,
+            sequence=self._sequence.index,
             image=self.index,
             col=col,
         ))
         # Set the image column
-        connection.send(Ops.STORE, self.offset + x_offset, self.sequence.bs(),
-                        self.data[x_offset:x_offset + self.WORDS_PER_COLUMN])
+        self._connection.send(Ops.STORE, self.offset + x_offset, self._sequence.bs(), self.data[x_offset:x_offset + self.WORDS_PER_COLUMN])
 
-    def upload_metadata(self, connection):
-        bs = self.sequence.bs()
-        connection.send(Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs,
-                        [self.width, 0, self.offset, 0x00FF])  # FIXME What is 0, and 0xff?
+    def upload_metadata(self):
+        bs = self._sequence.bs()
+        self._connection.send(Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs, [self.width, 0, self.offset, 0x00FF])  # FIXME What is 0, and 0xff?
