@@ -114,6 +114,18 @@ Each of the payload components are packed into each value using [simple binary e
 This means a value of 19 is `0x19`, 20 is `0x20`.  
 Negative values are complement based value, with a radix of 13 for the units, and 5 for the tens.
 
+### Enable display, `0x07` ###
+
+This operation enables or disables the display output. Animation and sequencing will carry on if the output is disabled.
+
+     07 00 00 00 00 01 00 01 00 09 00
+    |Op|Addr1|Addr2|Len  |     |Sum  |
+
+* Operation: `0x07`
+* Address 1: `0x0000`
+* Address 2: `0x0000`
+* Payload: `0x0001` for output, `0x0000` for no output
+
 ### Re-initialise, `0xff` ###
 
 The Re-initalise operation causes the device to restart and reread any stored data.

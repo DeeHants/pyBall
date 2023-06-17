@@ -81,8 +81,9 @@ class Zone:
             state |= 0x04
         state |= (self.chase_bank_max << 8)
 
+        # Display state
         self._connection.send(
-            Ops.X7,  0x0000, 0x0000,  # FIXME what is op 7?
+            Ops.ENABLE_OUTPUT, 0x0000, 0x0000,
             [1]
         )
         self._connection.send(

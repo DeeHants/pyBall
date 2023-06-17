@@ -9,7 +9,7 @@ class Ops:
     TARGET_ZONE = 0x01
     STORE = 0x02
     SETTIME = 0x04
-    X7 = 0x07
+    ENABLE_OUTPUT = 0x07
     X8 = 0x08
     REINIT = 0xFF
 
