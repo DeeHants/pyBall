@@ -61,13 +61,12 @@ class Position:
             position=self.index,
         ))
 
-        base = Addr.POSITION_BASE + (self.index << 4)
+        base = Addr.POSITION_REPEAT_INDEX + (self.index << 4)  # and POSITION_REPEAT_COUNT
         bs = self._sequence.bs()
         self._connection.send(
-            Ops.STORE, base + 0x6, bs,
-            [self.repeat_index]
-        )
-        self._connection.send(
-            Ops.STORE, base + 0x7, bs,
-            [self.repeat]
+            Ops.STORE, base, bs,
+            [
+                self.repeat_index,
+                self.repeat
+            ]
         )

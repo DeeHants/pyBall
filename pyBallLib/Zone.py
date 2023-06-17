@@ -50,11 +50,11 @@ class Zone:
 
         # Register this device with the zone serial and channel
         self._connection.send(
-            Ops.STORE, 0x010C, 0x0000,
+            Ops.STORE, 0x010C, 0x0000,  # FIXME what is addr 0x010C?
             0
         )
         self._connection.send(
-            Ops.STORE, 0x0100, 0x0000,
+            Ops.STORE, Addr.DEVICE_ZONE_SERIAL, 0x0000,  # and DEVICE_ZONE_CHANNEL
             [
                 self.serial,
                 self.channel
@@ -86,7 +86,7 @@ class Zone:
             [1]
         )
         self._connection.send(
-            Ops.STORE, 0x0108, 0x0000,
+            Ops.STORE, Addr.DEVICE_ACTIVE_POSITION, 0x0000,  # and sequence, bank and state
             [
                 self.active_position,
                 self.active_sequence,
@@ -95,7 +95,7 @@ class Zone:
             ]
         )
         self._connection.send(
-            Ops.STORE, 0x010D, 0x0000,
+            Ops.STORE, Addr.DEVICE_SCHEDULE_ENABLED, 0x0000,
             [self.scheduler]
         )
         self._connection.send(

@@ -102,7 +102,7 @@ class Sequence:
         sum_hi = int((sum & 0xffff0000) >> 16)
         sum_lo = (sum & 0x0000ffff)
         self._connection.send(
-            Ops.STORE, 0x2003, bs,
+            Ops.STORE, Addr.SEQUENCE_CHECKSUM, bs,
             [
                 sum_hi,
                 sum_lo
@@ -152,11 +152,11 @@ class Sequence:
 
         # Update sequence parameters
         self._connection.send(
-            Ops.STORE, 0x2002, bs,
+            Ops.STORE, Addr.SEQUENCE_POSITION_COUNT, bs,
             [len(self.positions)]
         )
         self._connection.send(
-            Ops.STORE, 0x2001, bs,
+            Ops.STORE, Addr.SEQUENCE_REPEAT_COUNT, bs,
             [self.repeat - 1]
         )
 

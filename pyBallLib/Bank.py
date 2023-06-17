@@ -47,7 +47,7 @@ class Bank:
 
         for index in range(0x10):
             self._connection.send(
-                Ops.STORE, 0x2000, self.bs() | index,
+                Ops.STORE, Addr.SEQUENCE_STATE, self.bs() | index,
                 [2]  # FIXME what is state 2?
             )
             self._connection.send(
@@ -66,7 +66,7 @@ class Bank:
         for sequence in self._sequences:
             if sequence:
                 self._connection.send(
-                    Ops.STORE, 0x2000, sequence.bs(),
+                    Ops.STORE, Addr.SEQUENCE_STATE, sequence.bs(),
                     [3]  # FIXME what is state 3?
                 )
         self._zone.target(False)
