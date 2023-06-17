@@ -114,7 +114,10 @@ class Image:
         # Set the image
         bs = self._sequence.bs()
         for index in range(0, len(self.data), self.WORDS_PER_COLUMN):
-            self._connection.send(Ops.STORE, offset + index, bs, self.data[index:index + self.WORDS_PER_COLUMN])
+            self._connection.send(
+                Ops.STORE, offset + index, bs,
+                self.data[index:index + self.WORDS_PER_COLUMN]
+            )
 
         # Store the offset for the metadata
         self.offset = offset
@@ -129,8 +132,19 @@ class Image:
             col=col,
         ))
         # Set the image column
-        self._connection.send(Ops.STORE, self.offset + x_offset, self._sequence.bs(), self.data[x_offset:x_offset + self.WORDS_PER_COLUMN])
+        self._connection.send(
+            Ops.STORE, self.offset + x_offset, self._sequence.bs(),
+            self.data[x_offset:x_offset + self.WORDS_PER_COLUMN]
+        )
 
     def upload_metadata(self):
         bs = self._sequence.bs()
-        self._connection.send(Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs, [self.width, 0, self.offset, 0x00FF])  # FIXME What is 0, and 0xff?
+        self._connection.send(
+            Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs,
+            [
+                self.width,
+                0,  # FIXME What is 0?
+                self.offset,
+                0x00FF  # FIXME What is 0xff?
+            ]
+        )

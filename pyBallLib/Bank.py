@@ -46,8 +46,14 @@ class Bank:
         self._zone.target(True)
 
         for index in range(0x10):
-            self._connection.send(Ops.STORE, 0x2000, self.bs() | index, [2])  # FIXME what is state 2?
-            self._connection.send(Ops.X8,  0x0000, 0x0000, [1])  # FIXME What is op 8?
+            self._connection.send(
+                Ops.STORE, 0x2000, self.bs() | index,
+                [2]  # FIXME what is state 2?
+            )
+            self._connection.send(
+                Ops.X8,  0x0000, 0x0000,  # FIXME What is op 8?
+                [1]
+            )
         self._zone.target(False)
 
         # Upload each sequence
@@ -59,5 +65,8 @@ class Bank:
         self._zone.target(True)
         for sequence in self._sequences:
             if sequence:
-                self._connection.send(Ops.STORE, 0x2000, sequence.bs(), [3])  # FIXME what is state 2?
+                self._connection.send(
+                    Ops.STORE, 0x2000, sequence.bs(),
+                    [3]  # FIXME what is state 3?
+                )
         self._zone.target(False)

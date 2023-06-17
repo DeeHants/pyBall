@@ -30,28 +30,29 @@ class Position:
             position=self.index,
         ))
 
-        data = [
-            self.image,
-            self.columns,
-            self.gap,
-            self.brilliance,
-            self.scroll,
-            self.offset,
-            self.repeat_index,
-            self.repeat,
-            0x0000,  # 0
-            0x0000,  # Position flash
-            0x0000,  # 0
-            0x1023,  # 4131
-            0x0201,  # 513
-            0x0001,  # 1
-            0x0000,  # 0
-            self.frames - 1,
-        ]
-
         base = Addr.POSITION_BASE + (self.index << 4)
         bs = self._sequence.bs()
-        self._connection.send(Ops.STORE, base, bs, data)
+        self._connection.send(
+            Ops.STORE, base, bs,
+            [
+                self.image,
+                self.columns,
+                self.gap,
+                self.brilliance,
+                self.scroll,
+                self.offset,
+                self.repeat_index,
+                self.repeat,
+                0x0000,  # 0
+                0x0000,  # Position flash
+                0x0000,  # 0
+                0x1023,  # 4131 # FIXME What is this?
+                0x0201,  # 513 # FIXME What is this?
+                0x0001,  # 1 # FIXME What is this?
+                0x0000,  # 0
+                self.frames - 1,
+            ]
+        )
 
     def upload(self):
         print("Uploading B{bank}S{sequence}P{position}b".format(
@@ -62,5 +63,11 @@ class Position:
 
         base = Addr.POSITION_BASE + (self.index << 4)
         bs = self._sequence.bs()
-        self._connection.send(Ops.STORE, base + 0x6, bs, [self.repeat_index])
-        self._connection.send(Ops.STORE, base + 0x7, bs, [self.repeat])
+        self._connection.send(
+            Ops.STORE, base + 0x6, bs,
+            [self.repeat_index]
+        )
+        self._connection.send(
+            Ops.STORE, base + 0x7, bs,
+            [self.repeat]
+        )

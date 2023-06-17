@@ -21,10 +21,23 @@ class Connection:
         self.running_sum = 0  # Initialise the running sum
 
     def target_device(self, serial, enable):
-        self.send(Ops.TARGET_DEVICE, 0x0000, 0x0000, [serial, 0x1 if enable else 0x0])
+        self.send(
+            Ops.TARGET_DEVICE, 0x0000, 0x0000,
+            [
+                serial,
+                0x1 if enable else 0x0
+            ]
+        )
 
     def target_zone(self, serial, channel, enable):
-        self.send(Ops.TARGET_ZONE, 0x0000, 0x0000, [serial, channel, 0x1 if enable else 0x0])
+        self.send(
+            Ops.TARGET_ZONE, 0x0000, 0x0000,
+            [
+                serial,
+                channel,
+                0x1 if enable else 0x0
+            ]
+        )
 
     def set(self, bank, sequence, position, parameter, value):
         # Address 1 is the low nibble specifying the parameter, and subsequent positions following on from 0x2100
@@ -32,7 +45,10 @@ class Connection:
         # Address 2 has the sequence index (0-16) in the low nibble, and the bank index above that
         bank_sequence = (bank.index << 4) | sequence.index
 
-        self.send(Ops.STORE, parameter, bank_sequence, value)
+        self.send(
+            Ops.STORE, parameter, bank_sequence,
+            value
+        )
 
     def send(self, op, addr, addr2=0, data=0):
         # Check parameters are valid

@@ -83,7 +83,15 @@ class Sequence:
                 offset = image.offset + image.length
             else:
                 # No image
-                self._connection.send(Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs, [0, 0, offset, 0x00FF])  # FIXME What is 0, and 0xff?
+                self._connection.send(
+                    Ops.STORE, Addr.IMAGE_BASE + (index * 4), bs,
+                    [
+                        0,
+                        0,  # FIXME What is 0?
+                        offset,
+                        0x00FF  # FIXME What is 0xff?
+                    ]
+                )
 
         print("Uploading B{bank}S{sequence}Ics".format(
             bank=self._bank.index,
@@ -93,7 +101,13 @@ class Sequence:
         sum = self._connection.running_sum
         sum_hi = int((sum & 0xffff0000) >> 16)
         sum_lo = (sum & 0x0000ffff)
-        self._connection.send(Ops.STORE, 0x2003, bs, [sum_hi, sum_lo])
+        self._connection.send(
+            Ops.STORE, 0x2003, bs,
+            [
+                sum_hi,
+                sum_lo
+            ]
+        )
 
         self._zone.target(False)
 
@@ -110,14 +124,40 @@ class Sequence:
             sequence=self.index,
         ))
         bs = self.bs()
-        self._connection.send(Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs, [0x0000, 0x0100, 0x0000, 0x00FF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1023, 0x0201, 0x0001, 0x0000, 0x0009])
+        self._connection.send(
+            Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs,
+            [
+                0x0000,  # image index
+                0x0100,  # columns,
+                0x0000,  # gap,
+                0x00FF,  # brilliance,
+                0x0000,  # scroll,
+                0x0000,  # offset,
+                0x0000,  # repeat_index,
+                0x0000,  # repeat,
+                0x0000,
+                0x0000,  # Position flash
+                0x0000,
+                0x1023,
+                0x0201,
+                0x0001,
+                0x0000,
+                0x0009
+            ]
+        )
 
         # Upload each position (additional attributes)
         for position in self.positions:
             position.upload()
 
         # Update sequence parameters
-        self._connection.send(Ops.STORE, 0x2002, bs, [len(self.positions)])
-        self._connection.send(Ops.STORE, 0x2001, bs, [self.repeat - 1])
+        self._connection.send(
+            Ops.STORE, 0x2002, bs,
+            [len(self.positions)]
+        )
+        self._connection.send(
+            Ops.STORE, 0x2001, bs,
+            [self.repeat - 1]
+        )
 
         self._zone.target(False)

@@ -49,9 +49,21 @@ class Zone:
         self._connection.target_device(device_serial, True)
 
         # Register this device with the zone serial and channel
-        self._connection.send(Ops.STORE, 0x010C, 0x0000, 0)
-        self._connection.send(Ops.STORE, 0x0100, 0x0000, [self.serial, self.channel])
-        self._connection.send(Ops.STORE, 0x0000, 0x4001, zone_serial_bytes + [self.channel, 2])
+        self._connection.send(
+            Ops.STORE, 0x010C, 0x0000,
+            0
+        )
+        self._connection.send(
+            Ops.STORE, 0x0100, 0x0000,
+            [
+                self.serial,
+                self.channel
+            ]
+        )
+        self._connection.send(
+            Ops.STORE, 0x0000, 0x4001,
+            zone_serial_bytes + [self.channel, 2]
+        )
 
         # Re-initialise
         self._connection.send(Ops.REINIT, 0x0000, 0x0000, 1)
@@ -69,10 +81,27 @@ class Zone:
             state |= 0x04
         state |= (self.chase_bank_max << 8)
 
-        self._connection.send(Ops.X7,  0x0000, 0x0000, [1])  # FIXME what is op 7?
-        self._connection.send(Ops.STORE, 0x0108, 0x0000, [self.active_position, self.active_sequence, self.active_bank, state])
-        self._connection.send(Ops.STORE, 0x010D, 0x0000, [self.scheduler])
-        self._connection.send(Ops.X8,  0x0000, 0x0000, [1])  # FIXME what is op 8?
+        self._connection.send(
+            Ops.X7,  0x0000, 0x0000,  # FIXME what is op 7?
+            [1]
+        )
+        self._connection.send(
+            Ops.STORE, 0x0108, 0x0000,
+            [
+                self.active_position,
+                self.active_sequence,
+                self.active_bank,
+                state
+            ]
+        )
+        self._connection.send(
+            Ops.STORE, 0x010D, 0x0000,
+            [self.scheduler]
+        )
+        self._connection.send(
+            Ops.X8, 0x0000, 0x0000,  # FIXME what is op 8?
+            [1]
+        )
 
     def bank(self, index):
         try:
@@ -142,9 +171,18 @@ class Zone:
         self.chase_banks = False
         self.chase_sequences = False
         self.updatestate()
-        self._connection.send(Ops.STORE, 0x0106, 0x0000, [0])  # FIXME what is addr 0x0106?
-        self._connection.send(Ops.STORE, 0x0107, 0x0000, [0])  # FIXME what is addr 0x0107?
-        self._connection.send(Ops.STORE, 0x0105, 0x0000, [0])  # FIXME what is addr 0x0105?
+        self._connection.send(
+            Ops.STORE, 0x0106, 0x0000,  # FIXME what is addr 0x0106?
+            [0]
+        )
+        self._connection.send(
+            Ops.STORE, 0x0107, 0x0000,  # FIXME what is addr 0x0107?
+            [0]
+        )
+        self._connection.send(
+            Ops.STORE, 0x0105, 0x0000,  # FIXME what is addr 0x0105?
+            [0]
+        )
         # FIXME preserve state
         self.chase_banks = True
         self.chase_sequences = True
@@ -163,9 +201,28 @@ class Zone:
 
         # Set the final state
         self.target(True)
-        self._connection.send(Ops.STORE, 0x0200, 0x0000, [0, 0, 0, 0])  # FIXME what is addr 0x0200?
-        self._connection.send(Ops.STORE, 0x01FF, 0x0000, [0])  # FIXME what is addr 0x01ff?
-        self._connection.send(Ops.STORE, 0x0180, 0x0000, [0, 0, 0, 0])  # FIXME what is addr 0x0180?
+        self._connection.send(
+            Ops.STORE, 0x0200, 0x0000,  # FIXME what is addr 0x0200?
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        )
+        self._connection.send(
+            Ops.STORE, 0x01FF, 0x0000,  # FIXME what is addr 0x01ff?
+            [0]
+        )
+        self._connection.send(
+            Ops.STORE, 0x0180, 0x0000,  # FIXME what is addr 0x0180?
+            [
+                0,
+                0,
+                0,
+                0
+            ]
+        )
         self.chase_banks = False
         self.chase_sequences = False
         self.updatestate()

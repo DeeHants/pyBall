@@ -32,4 +32,12 @@ class RTIBlock:
 
     def upload_metadata(self):
         bs = self._sequence.bs()
-        self._connection.send(Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs, [self.width, 0, self.offset, 0x00FF])  # FIXME What is 0, and 0xff?
+        self._connection.send(
+            Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs,
+            [
+                self.width,
+                0,  # FIXME What is 0?
+                self.offset,
+                0x00FF  # FIXME What is 0xff?
+            ]
+        )
