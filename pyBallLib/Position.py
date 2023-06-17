@@ -21,6 +21,10 @@ class Position:
         self.offset = 0
         self.repeat_index = 0
         self.repeat = 0
+        self.flash_interval = 0
+        self.wipe_increment = 0
+        self.fade_in_increment = 0
+        self.fade_out_increment = 0
         self.frames = 10
 
     def uploadbulk(self):
@@ -43,13 +47,13 @@ class Position:
                 self.offset,
                 self.repeat_index,
                 self.repeat,
-                0x0000,  # 0
-                0x0000,  # Position flash
-                0x0000,  # 0
+                0x0000,  # 0 # FIXME What is this?
+                self.flash_interval | (self.wipe_increment << 8),
+                self.fade_in_increment | (self.fade_out_increment << 8),
                 0x1023,  # 4131 # FIXME What is this?
                 0x0201,  # 513 # FIXME What is this?
                 0x0001,  # 1 # FIXME What is this?
-                0x0000,  # 0
+                0x0000,  # 0 # FIXME What is this?
                 self.frames - 1,
             ]
         )

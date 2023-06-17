@@ -136,13 +136,13 @@ class Sequence:
                 0x0000,  # repeat_index,
                 0x0000,  # repeat,
                 0x0000,
-                0x0000,  # Position flash
-                0x0000,
+                0x0000,  # flash/wipe
+                0x0000,  # fade in/out
                 0x1023,
                 0x0201,
                 0x0001,
                 0x0000,
-                0x0009
+                0x0009  # frame count
             ]
         )
 

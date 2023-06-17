@@ -197,6 +197,8 @@ Each position is defined in blocks of 16 values, repeated 256 times in sequentia
 * `0x2105`: Rotational position offset
 * `0x2106`: Repeat index
 * `0x2107`: Repeat count <sup>1</sup>
+* `0x2109`: Flash Interval & wipe increment (first byte is flash, second is wipe)
+* `0x210a`: Fade in/out increment (first byte is in, second is out)
 * `0x210f`: Frame count
 
 These repeat 256 times with the first at `0x2100`, second at `0x2110`, and the last at `0x30f0`, putting the last value at `0x30ff`.
