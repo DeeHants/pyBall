@@ -52,5 +52,5 @@ position.scroll = 0
 position.frames = 10
 
 # Upload the data
-zone.updatestate()
+zone.update_state()
 zone.upload()

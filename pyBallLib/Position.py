@@ -27,7 +27,7 @@ class Position:
         self.fade_out_increment = 0
         self.frames = 10
 
-    def uploadbulk(self):
+    def upload(self):
         print("Uploading B{bank}S{sequence}P{position}".format(
             bank=self._bank.index,
             sequence=self._sequence.index,
@@ -58,7 +58,7 @@ class Position:
             ]
         )
 
-    def upload(self):
+    def upload_repeat(self):
         print("Uploading B{bank}S{sequence}P{position}b".format(
             bank=self._bank.index,
             sequence=self._sequence.index,

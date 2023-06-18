@@ -21,7 +21,7 @@ for device_serial in device_serials:
         zone_serial=zone_serial,
         zone_channel=zone_channel,
     ))
-    zone.assigndevice(device_serial)
+    zone.assign_device(device_serial)
 
 # Not talking to anything again
 zone.target(False)

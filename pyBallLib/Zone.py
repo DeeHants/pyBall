@@ -30,7 +30,7 @@ class Zone:
         for index in range(4):
             self._banks.append(Bank(self, index))
 
-    def assigndevice(self, device_serial=''):
+    def assign_device(self, device_serial=''):
         # Not talking to anything
         self.target(False)
 
@@ -71,7 +71,7 @@ class Zone:
         # Not talking to anything again
         self.target(False)
 
-    def updatestate(self):
+    def update_state(self):
         state = 0
         if self.freeze:
             state |= 0x01
@@ -120,7 +120,7 @@ class Zone:
     def target(self, enable):
         self._connection.target_zone(self.serial, self.channel, enable)
 
-    def settime(self, time=0):
+    def set_time(self, time=0):
         def packed_bcd_value(value):
             # If it's negative, we need to use a complement value
             neg = value < 0
@@ -171,7 +171,7 @@ class Zone:
         self.target(True)
         self.chase_banks = False
         self.chase_sequences = False
-        self.updatestate()
+        self.update_state()
         self._connection.send(
             Ops.STORE, 0x0106, 0x0000,  # FIXME what is addr 0x0106?
             [0]
@@ -187,10 +187,10 @@ class Zone:
         # FIXME preserve state
         self.chase_banks = True
         self.chase_sequences = True
-        self.updatestate()
+        self.update_state()
 
         # Sync the time
-        self.settime()
+        self.set_time()
 
         self.target(True)  # FIXME is this no-op needed?
         self.target(False)
@@ -226,9 +226,9 @@ class Zone:
         )
         self.chase_banks = False
         self.chase_sequences = False
-        self.updatestate()
-        self.updatestate()  # FIXME 2nd time lucky?
-        self.updatestate()  # FIXME 3rd time lucky?
+        self.update_state()
+        self.update_state()  # FIXME 2nd time lucky?
+        self.update_state()  # FIXME 3rd time lucky?
         self._connection.send(Ops.REINIT, 0x0000, 0x0000, [1])  # Re-initialise
         self.target(False)
         self.target(False)  # FIXME duplicate

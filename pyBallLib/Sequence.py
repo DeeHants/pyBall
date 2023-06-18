@@ -116,7 +116,7 @@ class Sequence:
 
         # Upload each position
         for position in self.positions:
-            position.uploadbulk()
+            position.upload()
 
         # Blank out the next position
         print("Uploading B{bank}S{sequence}PX".format(
@@ -148,7 +148,7 @@ class Sequence:
 
         # Upload each position (additional attributes)
         for position in self.positions:
-            position.upload()
+            position.upload_repeat()
 
         # Update sequence parameters
         self._connection.send(
