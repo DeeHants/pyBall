@@ -146,7 +146,8 @@ Values can either be set individually, or in a block for a set of sequential val
 Many of these addresses are specified with the bank/sequence in address 2.
 This is composed of the sequence index (0 based) in the low nibble, an the bank index (0 based) in the high nibble of the first byte, e.g. Bank 2, sequence 5 will be `0x0014`.
 
-* `0x0100-0x1fff`: Device wide data
+* `0x0100-0x01ff`: Device wide data
+* `0x0200-0x11ff`: Schedule data
 * `0x2000-0x20ff`: Sequence data
 * `0x2100-0x30ff`: Position data
 * `0x3100-0xffff`: Image pool data
@@ -169,6 +170,20 @@ All these values have `0x0000` in address 2.
 * `0x0183`: Bank 4 additional repeat count <sup>1</sup>
 
 <sup>1</sup> Repeat counts are 0 based, 0 = repeat once, 1 = repeat twice, etc).
+
+## Schedule ###
+
+Schedule data is stored in addresses in the range `0x0200-0x11ff`.
+These make use of the bank/sequence address in address 2 to increase the number of allowable entries.
+Address `0x01ff` is used to store the index/address of the maximum expected schedule entry.
+
+Each schedule entry is defined in blocks of 4 values, repeated 65534 times in sequential blocks.
+
+* `0x0200`: Month (high byte) and day (low byte)
+* `0x0201`: Hour (high byte) and minute (low byte)
+* `0x0202`: Bank (low nibble of high byte) and sequence (low byte) to switch to, with other bits also set for other flags
+
+These repeat 65534 times with the first at `0x0200, 0x0000`, second at `0x0204, 0x0000`, 250th at `0x11ff, 0x0000`, 251st in the next bank/sequences at `0x0200, 0x0100`, putting the last value at `0x11ff, 0x3f00`.
 
 ### Sequence values ###
 
