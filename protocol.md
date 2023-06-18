@@ -158,11 +158,15 @@ Device wide data is stored in addresses in the range `0x0100-0x1fff`.
 All these values have `0x0000` in address 2.
 
 * `0x0100-0x0103`: Software serial 8 bytes, little endian
-* `0x0104`: Channel number
-* `0x0108`: Active position
-* `0x0109`: Active sequence
-* `0x010a`: Active bank
+* `0x0104`: Channel number, 0 to 255
+* `0x0108`: Active position, 0 to n
+* `0x0109`: Active sequence, 0 to 15
+* `0x010a`: Active bank, 0 to 3
 * `0x010b`: Chase state
+  * low byte, bit 0: Freeze/don't chase positions
+  * low byte, bit 1: Don't chase sequences
+  * low byte, bit 2: Don't chase banks
+  * high byte: Maximum bank to chase (1 based)
 * `0x010d`: Scheduler enabled
 * `0x0180`: Bank 1 additional repeat count <sup>1</sup>
 * `0x0181`: Bank 2 additional repeat count <sup>1</sup>
@@ -204,21 +208,33 @@ Like the sequence values above, all these values use the bank/sequence address i
 
 Each position is defined in blocks of 16 values, repeated 256 times in sequential blocks.
 
+Most of these values are relative to the image width. Examples below will be based on a 100 pixels wide.
+
 * `0x2100`: Image index
-* `0x2101`: Columns
-* `0x2102`: Gap size
-* `0x2103`: Brilliance
-* `0x2104`: Scroll speed
+* `0x2101`: Columns, total width of the rendered image with gaps.
+* `0x2102`: Gap size, gap between each image repeat
+* `0x2103`: Brilliance, 0 to 255
+* `0x2104`: Scroll speed, 0 is stationary, 1 to half the width scrolls to the left, above half scrolls to the right
 * `0x2105`: Rotational position offset
-* `0x2106`: Repeat index
+* `0x2106`: Repeat index of the position to repeat from
 * `0x2107`: Repeat count <sup>1</sup>
-* `0x2109`: Flash Interval & wipe increment (first byte is flash, second is wipe)
+* `0x2109`: Flash Interval & wipe increment
+  * low byte: Number of frame between flashing on and off. 0 to 128, higher numbers are slower.
+  * high byte: Wipe increment, the number of columns to reveal each frame. 0 to 127, higher numbers are quicker.
 * `0x210a`: Fade in/out increment (first byte is in, second is out)
-* `0x210f`: Frame count
+  * low byte: Fade in increment of the brilliance, 0 to 127, higher numbers are quicker.
+  * high byte: Fade out decrement of the brilliance. 0 to 127, higher numbers are quicker.
+* `0x210f`: Number of frames before moving to the next position, or repeating.
 
 These repeat 256 times with the first at `0x2100`, second at `0x2110`, and the last at `0x30f0`, putting the last value at `0x30ff`.
 
 <sup>1</sup> Repeat counts are 0 based, 0 = repeat once, 1 = repeat twice, etc).
+
+The iBall can show about 850 columns round. Having a 100 pixel image, with a columns of 800, will repeat the image 8 times.
+Setting the gap to 300, would render at the same size, but only 2 of them on opposite sides (0-100 is image, 100-400 is gap, 400-500 is image, 500-800 is gap).
+Setting the columns to 100 would stretch the image around the entire display.
+
+The rotational position sets an offset in columns from the origin, and the scroll adjusts how many columns will be offset each frame.
 
 ### Image pool ###
 
