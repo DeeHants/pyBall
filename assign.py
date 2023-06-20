@@ -11,9 +11,6 @@ device_serials = [
 connection = pyBallLib.Connection(serial_port)
 zone = pyBallLib.Zone(connection, zone_serial, zone_channel)
 
-# Not talking to anything
-zone.target(False)
-
 # Assign each device to the zone
 for device_serial in device_serials:
     print("Assigning {device_serial} to {zone_serial}:{zone_channel}".format(
@@ -23,5 +20,5 @@ for device_serial in device_serials:
     ))
     zone.assign_device(device_serial)
 
-# Not talking to anything again
-zone.target(False)
+# Force a time update
+zone.set_time()
