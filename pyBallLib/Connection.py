@@ -16,7 +16,9 @@ class Connection:
         if port != '':
             self.ser = serial.Serial(port, 38400)
 
-        self.running_sum = 0  # Initialise the running sum
+        # Initialise the running sum
+        self._running_sum: int = 0
+        self._keep_running_sum: bool = False
 
         # Create a regex to match the device and zone serial numbers
         self.serial_pattern = re.compile('[0-9a-f]{16}', re.IGNORECASE)
@@ -93,8 +95,9 @@ class Connection:
         sum &= 0xffff
 
         # Running sum (used for images)
-        for block in data_array:
-            self.running_sum += block
+        if (self._keep_running_sum):
+            for block in data_array:
+                self._running_sum += block
 
         # Convert to an array of bytes supported by pack
         data_bytes = struct.pack('<' + (length * 'H'), *data_array)
@@ -116,3 +119,18 @@ class Connection:
         # Send the data to the serial port
         if self.ser:
             self.ser.write(result)
+
+    def start_running_sum(self):
+        """Starts the calculation of the running sum of all sent data"""
+        self._running_sum = 0
+        self._keep_running_sum = True
+
+    def end_running_sum(self) -> int:
+        """
+        Finishes and returns the calculated running sum
+
+        Returns:
+            int: The sum of all sent data
+        """
+        self._keep_running_sum = False
+        return self._running_sum

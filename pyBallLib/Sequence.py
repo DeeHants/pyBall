@@ -60,7 +60,7 @@ class Sequence:
         self._zone.target(True)
 
         # Reset the running sum for image checksum
-        self._connection.running_sum = 0
+        self._connection.start_running_sum()
 
         # Upload each image
         offset = Addr.DATA_BASE
@@ -98,7 +98,7 @@ class Sequence:
             sequence=self.index,
         ))
         # Save the image checksum
-        sum = self._connection.running_sum
+        sum = self._connection.end_running_sum()
         sum_hi = int((sum & 0xffff0000) >> 16)
         sum_lo = (sum & 0x0000ffff)
         self._connection.send(
