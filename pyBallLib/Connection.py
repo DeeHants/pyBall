@@ -11,14 +11,15 @@ from .Constants import Ops, Addr
 
 class Connection:
     def __init__(self, port: str):
-        self.serial_pattern = re.compile('[0-9a-f]{16}', re.IGNORECASE)
-
         # Connect to the serial port
         self.ser = None
         if port != '':
             self.ser = serial.Serial(port, 38400)
 
         self.running_sum = 0  # Initialise the running sum
+
+        # Create a regex to match the device and zone serial numbers
+        self.serial_pattern = re.compile('[0-9a-f]{16}', re.IGNORECASE)
 
     def target_device(self, serial: str, enable: bool):
         self.send(
