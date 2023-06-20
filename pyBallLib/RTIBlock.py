@@ -6,7 +6,7 @@ from .Constants import Ops, Addr
 
 
 class RTIBlock:
-    def __init__(self, sequence, index):
+    def __init__(self, sequence, index: int):
         self._sequence = sequence
         self._bank = sequence._bank
         self._zone = sequence._bank._zone
@@ -19,7 +19,7 @@ class RTIBlock:
         self.height = 73
         self.offset = 0  # Updated when uploaded
 
-    def upload(self, offset):
+    def upload(self, offset: int):
         print("Uploading B{bank}S{sequence}R{image}".format(
             bank=self._bank.index,
             sequence=self._sequence.index,

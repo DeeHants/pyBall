@@ -10,7 +10,7 @@ from .Constants import Ops, Addr
 class Image:
     WORDS_PER_COLUMN = 0x10  # 16x 16-bit words per column
 
-    def __init__(self, sequence, index, width, image_filename='', image_data=[], image_bytes=[]):
+    def __init__(self, sequence, index: int, width: int, image_filename: str = '', image_data=[], image_bytes=[]):
         self._sequence = sequence
         self._bank = sequence._bank
         self._zone = sequence._bank._zone
@@ -70,7 +70,7 @@ class Image:
             if index == 64:
                 offset_counter += 5
 
-    def set_pixel(self, x, y, colour):
+    def set_pixel(self, x: int, y: int, colour: tuple):
         # Check the tuple length
         if len(colour) != 3:
             raise ValueError("colour value must contain 3 elements")
@@ -105,7 +105,7 @@ class Image:
         else:
             self.data[index] &= pattern2
 
-    def upload(self, offset):
+    def upload(self, offset: int):
         print("Uploading B{bank}S{sequence}I{image}".format(
             bank=self._bank.index,
             sequence=self._sequence.index,
@@ -122,7 +122,7 @@ class Image:
         # Store the offset for the metadata
         self.offset = offset
 
-    def upload_col(self, col):
+    def upload_col(self, col: int):
         x_offset = (col * self.WORDS_PER_COLUMN)
 
         print("Uploading B{bank}S{sequence}I{image}C{col}".format(

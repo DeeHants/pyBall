@@ -7,7 +7,7 @@ from .Sequence import Sequence
 
 
 class Bank:
-    def __init__(self, zone, index):
+    def __init__(self, zone, index: int):
         self._zone = zone
         self._connection = zone._connection
         self.index = index
@@ -18,7 +18,7 @@ class Bank:
         for index in range(16):
             self._sequences.append(None)
 
-    def sequence(self, index):
+    def sequence(self, index: int):
         try:
             # Ensure we have an object
             if not self._sequences[index]:

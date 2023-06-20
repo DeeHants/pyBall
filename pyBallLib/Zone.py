@@ -9,7 +9,7 @@ from .Bank import Bank
 
 
 class Zone:
-    def __init__(self, connection, serial='', channel=0):
+    def __init__(self, connection, serial: str = '', channel: int = 0):
         self._connection = connection
         self.name = ""
         self.serial = serial
@@ -30,7 +30,7 @@ class Zone:
         for index in range(4):
             self._banks.append(Bank(self, index))
 
-    def assign_device(self, device_serial=''):
+    def assign_device(self, device_serial: str = ''):
         # Not talking to anything
         self.target(False)
 
@@ -104,7 +104,7 @@ class Zone:
             [1]
         )
 
-    def bank(self, index):
+    def bank(self, index: int):
         try:
             # Ensure we have an object
             if not self._banks[index]:
@@ -117,11 +117,11 @@ class Zone:
             # Re-raise IndexError with a more useful message
             raise IndexError("bank index out of range, must be 0-3")
 
-    def target(self, enable):
+    def target(self, enable: bool):
         self._connection.target_zone(self.serial, self.channel, enable)
 
-    def set_time(self, time=0):
-        def packed_bcd_value(value):
+    def set_time(self, time: datetime = None):
+        def packed_bcd_value(value: int):
             # If it's negative, we need to use a complement value
             neg = value < 0
             if neg:
@@ -140,7 +140,7 @@ class Zone:
             return tens << 4 | units
 
         # Use the current time if none was passed
-        if time == 0:
+        if time is None:
             time = datetime.datetime.now()
 
         # Pack the date/time components into 4 16-bit words

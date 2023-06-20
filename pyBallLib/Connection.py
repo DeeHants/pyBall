@@ -10,7 +10,7 @@ from .Constants import Ops, Addr
 
 
 class Connection:
-    def __init__(self, port):
+    def __init__(self, port: str):
         self.serial_pattern = re.compile('[0-9a-f]{16}', re.IGNORECASE)
 
         # Connect to the serial port
@@ -20,7 +20,7 @@ class Connection:
 
         self.running_sum = 0  # Initialise the running sum
 
-    def target_device(self, serial, enable):
+    def target_device(self, serial: str, enable: bool):
         self.send(
             Ops.TARGET_DEVICE, 0x0000, 0x0000,
             [
@@ -29,7 +29,7 @@ class Connection:
             ]
         )
 
-    def target_zone(self, serial, channel, enable):
+    def target_zone(self, serial: str, channel: int, enable: bool):
         self.send(
             Ops.TARGET_ZONE, 0x0000, 0x0000,
             [
@@ -39,7 +39,7 @@ class Connection:
             ]
         )
 
-    def set(self, bank, sequence, position, parameter, value):
+    def set(self, bank, sequence, position, parameter: int, value: any):
         # Address 1 is the low nibble specifying the parameter, and subsequent positions following on from 0x2100
         parameter += Addr.POSITION_BASE + (position.index << 4)
         # Address 2 has the sequence index (0-16) in the low nibble, and the bank index above that
@@ -50,7 +50,7 @@ class Connection:
             value
         )
 
-    def send(self, op, addr, addr2=0, data=0):
+    def send(self, op: int, addr: int, addr2: int = 0, data=0):
         # Check parameters are valid
         if not isinstance(op, int):
             raise TypeError("Parameter 'op' is not an <int>.")

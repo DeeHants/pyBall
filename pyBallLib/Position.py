@@ -6,7 +6,7 @@ from .Constants import Ops, Addr
 
 
 class Position:
-    def __init__(self, sequence, index):
+    def __init__(self, sequence, index: int):
         self._sequence = sequence
         self._bank = sequence._bank
         self._zone = sequence._bank._zone
@@ -74,3 +74,42 @@ class Position:
                 self.repeat
             ]
         )
+
+# Cols  1
+# Length 11: 02 01 21 00 00 01 00 22 01 26 22
+
+# Gap   2
+# Length 11: 02 02 21 00 00 01 00 20 00 25 21
+
+# Brilliance 3
+# Length 11: 02 03 21 00 00 01 00 FF 00 05 22
+
+# Scroll 4
+# Length 11: 02 04 21 00 00 01 00 00 00 07 21
+
+# Position 5
+# Length 11: 02 05 21 00 00 01 00 00 00 08 21
+
+# Flash 9 low
+# Length 11: 02 09 21 00 00 01 00 00 00 0C 21 # none
+# Length 11: 02 09 21 00 00 01 00 40 00 4C 21 # slow
+
+# Wipe 9 high
+# Length 11: 02 09 21 00 00 01 00 00 01 0C 22 # wipe slow
+# Length 11: 02 09 21 00 00 01 00 00 04 0C 25 # wipe med
+# Length 11: 02 09 21 00 00 01 00 00 00 0C 21 # wipe off
+
+# Fade in A low
+# Length 11: 02 0A 21 00 00 01 00 00 00 0D 21
+# Length 11: 02 0A 21 00 00 01 00 10 00 1D 21 # fade slow
+# Length 11: 02 0A 21 00 00 01 00 08 00 15 21 # fade med
+# Length 11: 02 0A 21 00 00 01 00 00 00 0D 21 # fade off
+
+# Fade out A high
+# Length 11: 02 0A 21 00 00 01 00 00 00 0D 21
+# Length 11: 02 0A 21 00 00 01 00 00 10 0D 31 # fade slow
+# Length 11: 02 0A 21 00 00 01 00 00 08 0D 29 # fade med
+# Length 11: 02 0A 21 00 00 01 00 00 00 0D 21 # fade off
+
+# Frames F
+# Length 11: 02 0F 21 00 00 01 00 F9 00 0B 22

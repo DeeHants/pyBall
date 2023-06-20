@@ -9,7 +9,7 @@ from .RTIBlock import RTIBlock
 
 
 class Sequence:
-    def __init__(self, bank, index):
+    def __init__(self, bank, index: int):
         self._bank = bank
         self._zone = bank._zone
         self._connection = bank._zone._connection
@@ -25,7 +25,7 @@ class Sequence:
         # Empty position list
         self.positions = []
 
-    def append_image(self, width, image_filename='', image_data=[], image_bytes=[]):
+    def append_image(self, width: int, image_filename: str = '', image_data=[], image_bytes=[]):
         image = Image(self, len(self.images), width, image_filename, image_data, image_bytes)
         self.images.append(image)
         self._renumber_images()
