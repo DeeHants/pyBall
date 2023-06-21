@@ -168,7 +168,9 @@ class Zone:
         self._connection.send(Ops.SETTIME, 0x00be, 0x0000, date_parts)
         self.target(False)
 
-    def bs(self):
+    @property
+    def bs(self) -> int:
+        """Return the bank/sequence value for the zone"""
         return 0x0000
 
     def upload(self):

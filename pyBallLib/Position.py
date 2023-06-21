@@ -40,9 +40,8 @@ class Position:
         ))
 
         base = Addr.POSITION_BASE + (self._index << 4)
-        bs = self._sequence.bs()
         self._connection.send(
-            Ops.STORE, base, bs,
+            Ops.STORE, base, self._sequence.bs,
             [
                 self.image,
                 self.columns,
@@ -71,9 +70,8 @@ class Position:
         ))
 
         base = Addr.POSITION_REPEAT_INDEX + (self._index << 4)  # and POSITION_REPEAT_COUNT
-        bs = self._sequence.bs()
         self._connection.send(
-            Ops.STORE, base, bs,
+            Ops.STORE, base, self._sequence.bs,
             [
                 self.repeat_index,
                 self.repeat

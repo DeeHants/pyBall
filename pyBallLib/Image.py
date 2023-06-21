@@ -117,7 +117,7 @@ class Image:
             image=self._index,
         ))
         # Set the image
-        bs = self._sequence.bs()
+        bs = self._sequence.bs
         for index in range(0, len(self.data), self.WORDS_PER_COLUMN):
             self._connection.send(
                 Ops.STORE, offset + index, bs,
@@ -138,14 +138,13 @@ class Image:
         ))
         # Set the image column
         self._connection.send(
-            Ops.STORE, self.offset + x_offset, self._sequence.bs(),
+            Ops.STORE, self.offset + x_offset, self._sequence.bs,
             self.data[x_offset:x_offset + self.WORDS_PER_COLUMN]
         )
 
     def upload_metadata(self):
-        bs = self._sequence.bs()
         self._connection.send(
-            Ops.STORE, Addr.IMAGE_BASE + (self._index * 4), bs,
+            Ops.STORE, Addr.IMAGE_BASE + (self._index * 4), self._sequence.bs,
             [
                 self.width,
                 0,  # FIXME What is 0?

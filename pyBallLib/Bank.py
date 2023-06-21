@@ -36,7 +36,9 @@ class Bank:
             # Re-raise IndexError with a more useful message
             raise IndexError("sequence index out of range, must be 0-15")
 
-    def bs(self):
+    @property
+    def bs(self) -> int:
+        """Return the bank/sequence value for the bank"""
         return self._index << 4
 
     def upload(self):
@@ -44,15 +46,12 @@ class Bank:
             bank=self._index,
         ))
 
-        # Generate the base BS address
-        bank_base = self._index << 4
-
         # Reset sequence states
         self._zone.target(True)
 
         for index in range(0x10):
             self._connection.send(
-                Ops.STORE, Addr.SEQUENCE_STATE, self.bs() | index,
+                Ops.STORE, Addr.SEQUENCE_STATE, self.bs | index,
                 [2]  # FIXME what is state 2?
             )
             self._connection.send(
@@ -71,7 +70,7 @@ class Bank:
         for sequence in self._sequences:
             if sequence:
                 self._connection.send(
-                    Ops.STORE, Addr.SEQUENCE_STATE, sequence.bs(),
+                    Ops.STORE, Addr.SEQUENCE_STATE, sequence.bs,
                     [3]  # FIXME what is state 3?
                 )
         self._zone.target(False)

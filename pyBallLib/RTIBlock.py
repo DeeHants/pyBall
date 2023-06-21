@@ -36,9 +36,8 @@ class RTIBlock:
         self.offset = offset
 
     def upload_metadata(self):
-        bs = self._sequence.bs()
         self._connection.send(
-            Ops.STORE, Addr.IMAGE_BASE + (self._index * 4), bs,
+            Ops.STORE, Addr.IMAGE_BASE + (self._index * 4), self._sequence.bs,
             [
                 self.width,
                 0,  # FIXME What is 0?

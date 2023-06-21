@@ -50,8 +50,10 @@ class Sequence:
         for index in range(len(self.positions)):
             self.positions[index]._index = index
 
-    def bs(self):
-        return self._bank.bs() | self._index
+    @property
+    def bs(self) -> int:
+        """Return the bank/sequence value for the sequence"""
+        return self._bank.bs | self._index
 
     def upload(self):
         print("Uploading B{bank}S{sequence}".format(
@@ -79,7 +81,7 @@ class Sequence:
         ))
         # Set the image metadata
         offset = Addr.DATA_BASE
-        bs = self.bs()
+        bs = self.bs
         for index in range(256):
             if index < len(self.images):
                 # Image entry
@@ -128,7 +130,7 @@ class Sequence:
             bank=self._bank.index,
             sequence=self._index,
         ))
-        bs = self.bs()
+        bs = self.bs
         self._connection.send(
             Ops.STORE, Addr.POSITION_BASE + (len(self.positions) << 4), bs,
             [
