@@ -11,9 +11,8 @@ from .Bank import Bank
 class Zone:
     def __init__(self, connection, serial: str = '', channel: int = 0):
         self._connection = connection
-        self.name = ""
-        self.serial = serial
-        self.channel = channel
+        self._serial = serial
+        self._channel = channel
 
         self.enabled = True
         self.chase_banks = True
@@ -30,6 +29,16 @@ class Zone:
         for index in range(4):
             self._banks.append(Bank(self, index))
 
+    @property
+    def serial(self) -> str:
+        """Return the zone serial number"""
+        return self._serial
+
+    @property
+    def channel(self) -> int:
+        """Return the zone channel number"""
+        return self._channel
+
     def assign_device(self, device_serial: str = ''):
         # Not talking to anything
         self.target(False)
@@ -37,12 +46,12 @@ class Zone:
         # Part of the assignation needs the zone serial as individual bytes
         zone_serial_bytes = []
         for offset in [14, 12, 10, 8, 6, 4, 2, 0]:
-            zone_serial_bytes.append(int(self.serial[offset:offset + 2], 16))
+            zone_serial_bytes.append(int(self._serial[offset:offset + 2], 16))
 
         print("Assigning {device_serial} to {zone_serial}:{zone_channel}".format(
             device_serial=device_serial,
-            zone_serial=self.serial,
-            zone_channel=self.channel,
+            zone_serial=self._serial,
+            zone_channel=self._channel,
         ))
 
         # Select the device we're talking to
@@ -56,13 +65,13 @@ class Zone:
         self._connection.send(
             Ops.STORE, Addr.DEVICE_ZONE_SERIAL, 0x0000,  # and DEVICE_ZONE_CHANNEL
             [
-                self.serial,
-                self.channel
+                self._serial,
+                self._channel
             ]
         )
         self._connection.send(
             Ops.STORE, 0x0000, 0x4001,
-            zone_serial_bytes + [self.channel, 2]
+            zone_serial_bytes + [self._channel, 2]
         )
 
         # Re-initialise
@@ -118,7 +127,7 @@ class Zone:
             raise IndexError("bank index out of range, must be 0-3")
 
     def target(self, enable: bool):
-        self._connection.target_zone(self.serial, self.channel, enable)
+        self._connection.target_zone(self._serial, self._channel, enable)
 
     def set_time(self, time: datetime = None):
         def packed_bcd_value(value: int):
@@ -163,7 +172,7 @@ class Zone:
         return 0x0000
 
     def upload(self):
-        if self.serial == '':
+        if self._serial == '':
             raise Exception("zone serial has not been set")
 
         # Set the initial state

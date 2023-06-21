@@ -10,13 +10,18 @@ class Bank:
     def __init__(self, zone, index: int):
         self._zone = zone
         self._connection = zone._connection
-        self.index = index
+        self._index = index
 
         self.repeat = 1
 
         self._sequences = []
         for index in range(16):
             self._sequences.append(None)
+
+    @property
+    def index(self):
+        """Return the index of this bank"""
+        return self._index
 
     def sequence(self, index: int):
         try:
@@ -32,15 +37,15 @@ class Bank:
             raise IndexError("sequence index out of range, must be 0-15")
 
     def bs(self):
-        return self.index << 4
+        return self._index << 4
 
     def upload(self):
         print("Uploading B{bank}".format(
-            bank=self.index,
+            bank=self._index,
         ))
 
         # Generate the base BS address
-        bank_base = self.index << 4
+        bank_base = self._index << 4
 
         # Reset sequence states
         self._zone.target(True)

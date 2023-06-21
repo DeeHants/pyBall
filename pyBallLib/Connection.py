@@ -12,16 +12,16 @@ from .Constants import Ops, Addr
 class Connection:
     def __init__(self, port: str):
         # Connect to the serial port
-        self.ser = None
+        self._serial = None
         if port != '':
-            self.ser = serial.Serial(port, 38400)
+            self._serial = serial.Serial(port, 38400)
 
         # Initialise the running sum
         self._running_sum: int = 0
         self._keep_running_sum: bool = False
 
         # Create a regex to match the device and zone serial numbers
-        self.serial_pattern = re.compile('[0-9a-f]{16}', re.IGNORECASE)
+        self._serial_number_pattern = re.compile('[0-9a-f]{16}', re.IGNORECASE)
 
     def target_device(self, serial: str, enable: bool):
         self.send(
@@ -78,7 +78,7 @@ class Connection:
                 # data is an int in the range of a 16-bit signed integer
                 data_array.append(item)
 
-            elif isinstance(item, str) and len(item) == 16 and self.serial_pattern.match(item):
+            elif isinstance(item, str) and len(item) == 16 and self._serial_number_pattern.match(item):
                 # Serial numbers (16 char hex string) are treated specially
                 for offset in [12, 8, 4, 0]:
                     data_array.append(int(item[offset:offset + 4], 16))
@@ -117,8 +117,8 @@ class Connection:
         ))
 
         # Send the data to the serial port
-        if self.ser:
-            self.ser.write(result)
+        if self._serial:
+            self._serial.write(result)
 
     def start_running_sum(self):
         """Starts the calculation of the running sum of all sent data"""

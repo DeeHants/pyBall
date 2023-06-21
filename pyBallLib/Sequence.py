@@ -13,7 +13,7 @@ class Sequence:
         self._bank = bank
         self._zone = bank._zone
         self._connection = bank._zone._connection
-        self.index = index
+        self._index = index
 
         self.repeat = 1
 
@@ -25,6 +25,11 @@ class Sequence:
         # Empty position list
         self.positions = []
 
+    @property
+    def index(self):
+        """Return the index of this sequence"""
+        return self._index
+
     def append_image(self, width: int, image_filename: str = '', image_data=[], image_bytes=[]):
         image = Image(self, len(self.images), width, image_filename, image_data, image_bytes)
         self.images.append(image)
@@ -33,7 +38,7 @@ class Sequence:
 
     def _renumber_images(self):
         for index in range(len(self.images)):
-            self.images[index].index = index
+            self.images[index]._index = index
 
     def append_position(self):
         position = Position(self, len(self.positions))
@@ -43,15 +48,15 @@ class Sequence:
 
     def _renumber_positions(self):
         for index in range(len(self.positions)):
-            self.positions[index].index = index
+            self.positions[index]._index = index
 
     def bs(self):
-        return self._bank.bs() | self.index
+        return self._bank.bs() | self._index
 
     def upload(self):
         print("Uploading B{bank}S{sequence}".format(
             bank=self._bank.index,
-            sequence=self.index,
+            sequence=self._index,
         ))
         self.upload_images()
         self.upload_positions()
@@ -70,7 +75,7 @@ class Sequence:
 
         print("Uploading B{bank}S{sequence}Imd".format(
             bank=self._bank.index,
-            sequence=self.index,
+            sequence=self._index,
         ))
         # Set the image metadata
         offset = Addr.DATA_BASE
@@ -95,7 +100,7 @@ class Sequence:
 
         print("Uploading B{bank}S{sequence}Ics".format(
             bank=self._bank.index,
-            sequence=self.index,
+            sequence=self._index,
         ))
         # Save the image checksum
         sum = self._connection.end_running_sum()
@@ -121,7 +126,7 @@ class Sequence:
         # Blank out the next position
         print("Uploading B{bank}S{sequence}PX".format(
             bank=self._bank.index,
-            sequence=self.index,
+            sequence=self._index,
         ))
         bs = self.bs()
         self._connection.send(

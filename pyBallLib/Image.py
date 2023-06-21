@@ -15,7 +15,7 @@ class Image:
         self._bank = sequence._bank
         self._zone = sequence._bank._zone
         self._connection = sequence._bank._zone._connection
-        self.index = index
+        self._index = index
 
         # Open the image file
         if image_filename:
@@ -70,6 +70,11 @@ class Image:
             if index == 64:
                 offset_counter += 5
 
+    @property
+    def index(self):
+        """Return the index of this image"""
+        return self._index
+
     def set_pixel(self, x: int, y: int, colour: tuple):
         # Check the tuple length
         if len(colour) != 3:
@@ -109,7 +114,7 @@ class Image:
         print("Uploading B{bank}S{sequence}I{image}".format(
             bank=self._bank.index,
             sequence=self._sequence.index,
-            image=self.index,
+            image=self._index,
         ))
         # Set the image
         bs = self._sequence.bs()
@@ -128,7 +133,7 @@ class Image:
         print("Uploading B{bank}S{sequence}I{image}C{col}".format(
             bank=self._bank.index,
             sequence=self._sequence.index,
-            image=self.index,
+            image=self._index,
             col=col,
         ))
         # Set the image column
@@ -140,7 +145,7 @@ class Image:
     def upload_metadata(self):
         bs = self._sequence.bs()
         self._connection.send(
-            Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs,
+            Ops.STORE, Addr.IMAGE_BASE + (self._index * 4), bs,
             [
                 self.width,
                 0,  # FIXME What is 0?

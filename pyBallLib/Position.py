@@ -11,7 +11,7 @@ class Position:
         self._bank = sequence._bank
         self._zone = sequence._bank._zone
         self._connection = sequence._bank._zone._connection
-        self.index = index
+        self._index = index
 
         self.image = 0
         self.columns = 73
@@ -27,14 +27,19 @@ class Position:
         self.fade_out_increment = 0
         self.frames = 10
 
+    @property
+    def index(self):
+        """Return the index of this position"""
+        return self._index
+
     def upload(self):
         print("Uploading B{bank}S{sequence}P{position}".format(
             bank=self._bank.index,
             sequence=self._sequence.index,
-            position=self.index,
+            position=self._index,
         ))
 
-        base = Addr.POSITION_BASE + (self.index << 4)
+        base = Addr.POSITION_BASE + (self._index << 4)
         bs = self._sequence.bs()
         self._connection.send(
             Ops.STORE, base, bs,
@@ -62,10 +67,10 @@ class Position:
         print("Uploading B{bank}S{sequence}P{position}b".format(
             bank=self._bank.index,
             sequence=self._sequence.index,
-            position=self.index,
+            position=self._index,
         ))
 
-        base = Addr.POSITION_REPEAT_INDEX + (self.index << 4)  # and POSITION_REPEAT_COUNT
+        base = Addr.POSITION_REPEAT_INDEX + (self._index << 4)  # and POSITION_REPEAT_COUNT
         bs = self._sequence.bs()
         self._connection.send(
             Ops.STORE, base, bs,

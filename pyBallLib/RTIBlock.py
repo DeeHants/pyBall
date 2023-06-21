@@ -11,7 +11,7 @@ class RTIBlock:
         self._bank = sequence._bank
         self._zone = sequence._bank._zone
         self._connection = sequence._bank._zone._connection
-        self.index = index
+        self._index = index
 
         self.data = []
         self.length = 0
@@ -19,11 +19,16 @@ class RTIBlock:
         self.height = 73
         self.offset = 0  # Updated when uploaded
 
+    @property
+    def index(self):
+        """Return the index of this RTI block"""
+        return self._index
+
     def upload(self, offset: int):
         print("Uploading B{bank}S{sequence}R{image}".format(
             bank=self._bank.index,
             sequence=self._sequence.index,
-            image=self.index,
+            image=self._index,
         ))
         # No image to upload
 
@@ -33,7 +38,7 @@ class RTIBlock:
     def upload_metadata(self):
         bs = self._sequence.bs()
         self._connection.send(
-            Ops.STORE, Addr.IMAGE_BASE + (self.index * 4), bs,
+            Ops.STORE, Addr.IMAGE_BASE + (self._index * 4), bs,
             [
                 self.width,
                 0,  # FIXME What is 0?
